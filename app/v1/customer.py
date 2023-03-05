@@ -5,18 +5,26 @@ from fastapi import Depends
 from fastapi import HTTPException
 
 from app.dependencies.session import get_db
+from app.dependencies.security import get_password_hash
+from app.dependencies.security import verify_password
 
 from app.models.customer import Customer
+
 from app.schemas.customer import CustomerCreate
+from app.schemas.customer import CustomerLogin
 from app.schemas.customer import CustomerPhone
+from app.schemas.customer import CustomerEmail
+from app.schemas.customer import CustomerOut
+
+from app.schemas.token import Token
+
 
 router = APIRouter()
 
-@router.post("/customer/register", response_model=None)
+@router.post("/customer/register", response_model=CustomerOut)
 async def create_customer(customer: CustomerCreate, db: Session = Depends(get_db)):
     customer_exists = db.query(Customer)\
         .filter((Customer.phone==customer.phone) | (Customer.email==customer.email))\
-        .filter(Customer.is_active==True)\
         .first()
 
     if customer_exists:
@@ -32,15 +40,47 @@ async def create_customer(customer: CustomerCreate, db: Session = Depends(get_db
                 detail="This email is already registered and active."
             )
 
+    hashed_password = get_password_hash(customer.password)
+
     db_customer = Customer(
         phone=customer.phone,
         email=customer.email,
         first_name=customer.first_name,
         last_name=customer.last_name,
+        password=hashed_password,
     )
 
     db.add(db_customer)
     db.commit()
+    db.refresh(db_customer)
+
+    return db_customer
+
+
+@router.post("/customer/login", response_model=None)
+async def login_customer(customer: CustomerLogin, db: Session = Depends(get_db)):
+    db_customer = db.query(Customer)\
+        .filter(Customer.phone==customer.phone)\
+        .first()
+
+    if not db_customer:
+        raise HTTPException(
+            status_code=200,
+            detail="This phone is not registered."
+        )
+    
+    hashed_password = get_password_hash(customer.password)
+
+    password_is_good = verify_password(hashed_password, db_customer.password)
+    
+    if not password_is_good:
+        raise HTTPException(
+            status_code=200,
+            detail="This password or phone is wrong."
+        )
+     
+    print("test") 
+
 
 @router.post("/customer/send/phone", response_model=None)
 async def send_customer_phone(customer: CustomerPhone, db: Session = Depends(get_db)):
@@ -48,15 +88,11 @@ async def send_customer_phone(customer: CustomerPhone, db: Session = Depends(get
         .filter(Customer.phone==customer.phone, Customer.is_active==False)\
         .first()
 
-    print('_______________________________________')
-    print('_______________________________________')
-    print(customer.date_email)
-    print(customer.date_phone)
-    print('_______________________________________')
-    print('_______________________________________')
+    if customer_exists:
+        pass
 
 @router.post("/customer/send/email", response_model=None)
-async def send_customer_email(customer: CustomerPhone, db: Session = Depends(get_db)):
+async def send_customer_email(customer: CustomerEmail, db: Session = Depends(get_db)):
     customer_exists = db.query(Customer)\
         .filter(Customer.email==customer.email, Customer.is_active==False)\
         .first()

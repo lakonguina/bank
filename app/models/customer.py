@@ -14,12 +14,12 @@ class Customer(Base):
     id_customer = Column(Integer, primary_key=True, index=True)
 
     email = Column(String(350), index=True, nullable=False)
-    phone = Column(String(16), index=True, nullable=True)
+    phone = Column(String(16), index=True, nullable=False)
     first_name = Column(String(64), nullable=False)
     last_name = Column(String(64), nullable=False)
-    password = Column(String(64), nullable=True)
+    password = Column(String(64), nullable=False)
 
-    is_active = Column(Boolean(), default=True, nullable=False)
+    is_active = Column(Boolean(), default=False, nullable=False)
     is_email_active = Column(Boolean(), default=False, nullable=False)
     is_phone_active = Column(Boolean(), default=False, nullable=False)
 
