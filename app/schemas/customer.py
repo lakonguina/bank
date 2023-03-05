@@ -1,7 +1,12 @@
 from pydantic import BaseModel
+from pydantic import EmailStr
 
-class CustomerCreate(BaseModel):
+class CustomerPhone(BaseModel):
     phone: str
-    email: str
+
+class CustomerEmail(BaseModel):
+    email: EmailStr
+
+class CustomerCreate(CustomerPhone, CustomerEmail):
     first_name: str
     last_name: str

@@ -2,3 +2,6 @@
 *~
 *.swp
 *.swo
+
+# Database
+*.db
