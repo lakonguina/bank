@@ -8,6 +8,7 @@ from app.dependencies.session import get_db
 from app.dependencies.security import get_password_hash
 from app.dependencies.security import verify_password
 from app.dependencies.security import create_access_token
+from app.dependencies.security import has_access
 
 from app.models.customer import Customer
 
@@ -87,7 +88,11 @@ async def login_customer(customer: CustomerLogin, db: Session = Depends(get_db))
 
 
 @router.post("/customer/send/phone", response_model=None)
-async def send_customer_phone(customer: CustomerPhone, db: Session = Depends(get_db)):
+async def send_customer_phone(
+        customer: CustomerPhone,
+        db: Session = Depends(get_db),
+        access = Depends(has_access),
+    ):
     customer_exists = db.query(Customer)\
         .filter(Customer.phone==customer.phone, Customer.is_active==False)\
         .first()
