@@ -5,7 +5,7 @@ from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy.sql import func
 
-from app.db.base import Base
+from app.core.base import Base
 
 
 class Customer(Base):

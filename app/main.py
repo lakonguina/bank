@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from app.db.base import Base
-from app.db.base import engine
+from app.core.base import Base
+from app.core.base import engine
 
 from app.v1 import customer
 
