@@ -7,6 +7,7 @@ from fastapi import HTTPException
 from app.dependencies.session import get_db
 from app.dependencies.security import get_password_hash
 from app.dependencies.security import verify_password
+from app.dependencies.security import create_access_token
 
 from app.models.customer import Customer
 
@@ -57,7 +58,7 @@ async def create_customer(customer: CustomerCreate, db: Session = Depends(get_db
     return db_customer
 
 
-@router.post("/customer/login", response_model=None)
+@router.post("/customer/login", response_model=Token)
 async def login_customer(customer: CustomerLogin, db: Session = Depends(get_db)):
     db_customer = db.query(Customer)\
         .filter(Customer.phone==customer.phone)\
@@ -69,17 +70,20 @@ async def login_customer(customer: CustomerLogin, db: Session = Depends(get_db))
             detail="This phone is not registered."
         )
     
-    hashed_password = get_password_hash(customer.password)
+    password_is_good = verify_password(customer.password, db_customer.password)
 
-    password_is_good = verify_password(hashed_password, db_customer.password)
-    
     if not password_is_good:
         raise HTTPException(
             status_code=200,
             detail="This password or phone is wrong."
         )
      
-    print("test") 
+    access_token = create_access_token(db_customer.phone)
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
 
 
 @router.post("/customer/send/phone", response_model=None)

@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from pydantic import EmailStr
 from pydantic import SecretStr
 
+
 class CustomerPhone(BaseModel):
     phone: str
 
