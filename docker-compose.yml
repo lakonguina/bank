@@ -6,3 +6,18 @@ services:
       - .:/app
     ports:
       - "8080:8080"
+
+  db:
+    image: postgres:15-bullseye
+    restart: always
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=test
+    ports:
+      - '5432:5432'
+    volumes:
+      - app-db:/var/lib/postgresql/data
+
+volumes:
+  app-db:

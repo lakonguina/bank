@@ -11,6 +11,8 @@ from app.dependencies.security import create_access_token
 from app.dependencies.security import has_access
 
 from app.models.customer import Customer
+from app.models.contact import Contact
+from app.models.country import Country
 
 from app.schemas.customer import CustomerCreate
 from app.schemas.customer import CustomerOut
@@ -22,7 +24,14 @@ router = APIRouter()
 
 @router.post("/customer/register", response_model=CustomerOut)
 async def create_customer(customer: CustomerCreate, db: Session = Depends(get_db)):
-    pass
+    db_customer = Customer(
+        first_name=customer.first_name,
+        last_name=customer.last_name,
+        password=customer.last_name,
+    )
+
+    db.add(db_customer)
+    db.commit()
     """
     customer_exists = db.query(Customer)\
         .filter((Customer.phone==customer.phone) | (Customer.email==customer.email))\

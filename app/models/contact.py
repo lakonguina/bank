@@ -2,6 +2,7 @@ from sqlalchemy import (
     Boolean,
     Column,
     DateTime,
+    ForeignKey,
     Integer,
     String,
 )
@@ -16,7 +17,7 @@ class Contact(Base):
     __tablename__ = "contacts"
 
     id_contact = Column(Integer, primary_key=True, index=True)
-    id_customer = Column(Integer, ForeignKey("users.id_user"))
+    id_customer = Column(Integer, ForeignKey("customers.id_customer"))
     id_country = Column(Integer, ForeignKey("countries.id_country"))
 
     phone = Column(String(16), index=True, nullable=False)
