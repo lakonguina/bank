@@ -8,7 +8,7 @@ from typing import (
     Union,
 )
 
-from pydantic import ValidationError
+from sqlalchemy.orm import Session
 
 from jose import (
     jwt,
@@ -17,14 +17,20 @@ from jose import (
 
 from passlib.context import CryptContext
 
-from fastapi import Depends
-
-from fastapi.security import (
-    HTTPBearer,
-    HTTPAuthorizationCredentials,
+from fastapi import (
+    Depends,
+    HTTPException,
+    status,
 )
 
+from fastapi.security import (
+    HTTPAuthorizationCredentials,
+    HTTPBearer,
+)
+
+from app.dependencies.session import get_db
 from app.core.settings import settings
+from app.models.customer import Customer
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -50,15 +56,15 @@ def create_access_token(subject: str) -> str:
     return encoded_jwt
 
 
-def has_access(access_token: HTTPAuthorizationCredentials = Depends(http_bearer)):
-    """
-        Function that is used to validate the token in the case that it requires it
-    """
+def has_access(
+    access_token: HTTPAuthorizationCredentials = Depends(http_bearer),
+    db: Session = Depends(get_db),
+) -> Customer:
 
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
-        headers={"WWW-Authenticate": authenticate_value},
+        headers={"WWW-Authenticate": "Bearer"},
     )
 
     try:
@@ -68,26 +74,16 @@ def has_access(access_token: HTTPAuthorizationCredentials = Depends(http_bearer)
             algorithms=settings.JWT_ALGORITHM,
         )
 
-        username: str = payload.get("sub")
+        phone: str = payload.get("sub")
+        expire: datetime = payload.get("exp")
 
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(
-            status_code=401,
-            detail='Authorization token expired'
-        )
+    except JWTError:
+        raise credentials_exception
+    
+    customer = db.query(Customer)\
+            .filter(Customer.phone==phone)\
+            .first()
 
-    except jwt.JWTClaimsError:
-        raise HTTPException(
-            status_code=401,
-            detail='Incorrect claims, check the audience and issuer.'
-        )
+    print(customer)
 
-    except Exception:
-        raise HTTPException(
-            status_code=401,
-            detail='Unable to parse authentication token'
-        )
-
-    print(payload)
-
-    return payload
+    return customer

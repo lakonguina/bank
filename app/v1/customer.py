@@ -13,9 +13,6 @@ from app.dependencies.security import has_access
 from app.models.customer import Customer
 
 from app.schemas.customer import CustomerCreate
-from app.schemas.customer import CustomerLogin
-from app.schemas.customer import CustomerPhone
-from app.schemas.customer import CustomerEmail
 from app.schemas.customer import CustomerOut
 
 from app.schemas.token import Token
@@ -25,6 +22,8 @@ router = APIRouter()
 
 @router.post("/customer/register", response_model=CustomerOut)
 async def create_customer(customer: CustomerCreate, db: Session = Depends(get_db)):
+    pass
+    """
     customer_exists = db.query(Customer)\
         .filter((Customer.phone==customer.phone) | (Customer.email==customer.email))\
         .first()
@@ -68,7 +67,7 @@ async def login_customer(customer: CustomerLogin, db: Session = Depends(get_db))
     if not db_customer:
         raise HTTPException(
             status_code=200,
-            detail="This phone is not registered."
+            detail="Wrong credentials."
         )
     
     password_is_good = verify_password(customer.password, db_customer.password)
@@ -76,7 +75,7 @@ async def login_customer(customer: CustomerLogin, db: Session = Depends(get_db))
     if not password_is_good:
         raise HTTPException(
             status_code=200,
-            detail="This password or phone is wrong."
+            detail="Wrong credentials."
         )
      
     access_token = create_access_token(db_customer.phone)
@@ -93,8 +92,9 @@ async def send_customer_phone(
         db: Session = Depends(get_db),
         access = Depends(has_access),
     ):
+
     customer_exists = db.query(Customer)\
-        .filter(Customer.phone==customer.phone, Customer.is_active==False)\
+        .filter(Customer.phone==customer.phone, Customer.is_active==True)\
         .first()
 
     if customer_exists:
@@ -105,3 +105,4 @@ async def send_customer_email(customer: CustomerEmail, db: Session = Depends(get
     customer_exists = db.query(Customer)\
         .filter(Customer.email==customer.email, Customer.is_active==False)\
         .first()
+"""
