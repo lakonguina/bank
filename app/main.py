@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from app.core.base import Base
 from app.core.base import engine
 
-from app.v1 import customer
+from app.api import customer
 
 app = FastAPI()
 
