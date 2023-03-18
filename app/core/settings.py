@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD = "test"
     POSTGRES_HOSTNAME = "db"
     POSTGRES_PORT = "5432"
-    POSTGRES_DB = "test"
+    POSTGRES_DB = "frontoffice"
 
     class Config:
         case_sensitive = True

@@ -2,14 +2,13 @@ CREATE DATABASE frontoffice;
 
 \c frontoffice
 
-
 CREATE TABLE IF NOT EXISTS countries (
 	id_country SERIAL PRIMARY KEY,
 	alpha2 CHAR(2) NOT NULL,
 	alpha3 CHAR(3) NOT NULL,
 	indicative VARCHAR(3) NOT NULL,
 	name VARCHAR(127) NOT NULL,
-	is_active BOOLEAN,
+	is_active BOOLEAN DEFAULT 0,
 	date_insert TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -19,7 +18,7 @@ CREATE TABLE IF NOT EXISTS customers (
 	first_name VARCHAR(64) NOT NULL, 
 	last_name VARCHAR(64) NOT NULL,
 	password VARCHAR(64) NOT NULL,
-	is_active BOOLEAN,
+	is_active BOOLEAN DEFAULT 1,
 	date_insert TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT fk_country
       		FOREIGN KEY(id_country)
@@ -29,7 +28,7 @@ CREATE TABLE IF NOT EXISTS customers (
 CREATE TABLE IF NOT EXISTS contacts (
 	id_contact SERIAL PRIMARY KEY,
 	id_customer INT NOT NULL,
-	phone VARCHAR(15) NOT NULL,
+	phone VARCHAR(16) NOT NULL,
 	is_phone_active BOOLEAN NOT NULL,
 	is_active BOOLEAN NOT NULL,
 	date_phone TIMESTAMP,
