@@ -3,6 +3,7 @@
 # Informations de connexion à la base de données
 DB_USER="$POSTGRES_USER"
 DB_PASSWORD="$POSTGRES_PASSWORD"
+echo $DB_USER
 
 # Répertoire contenant les répertoires des bases de données
 BASE_DIR="/usr/src/sql/data/prod/"
@@ -19,7 +20,7 @@ for db_dir in ${BASE_DIR}*; do
                 table_name=$(basename "$file" .csv)
 
                 # Commande d'insertion SQL pour PostgreSQL
-                psql -U "$DBUSER" -d "$db_name" -c "\copy $table_name FROM '$file' CSV HEADER"
+                psql --username "$DB_USER" -d "$db_name" -c "\copy $table_name FROM '$file' CSV HEADER"
 
                 if [ $? -eq 0 ]; then
                     echo "Le fichier $file a été inséré dans la table $table_name de la base de données $db_name."
