@@ -1,15 +1,20 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 from app.schemas.country import (
     CountryAlpha3,
     CountryOut,
 )
 
-from app.schemas.contact import (
-    ContactPhone,
-    ContactOut,
+from app.schemas.email import (
+    EmailCreate,
+    EmailOut,
+)
+
+from app.schemas.phone import (
+    PhoneCreate,
+    PhoneOut,
 )
 
 
@@ -17,8 +22,8 @@ class CustomerCreate(BaseModel):
     first_name: str
     last_name: str
     password: str
-    country: CountryAlpha3
-    contact: ContactPhone
+    phone: str
+    email: EmailStr
 
 class CustomerOut(BaseModel):
     first_name: str
@@ -26,7 +31,6 @@ class CustomerOut(BaseModel):
     is_active: bool
     date_insert: datetime
     country: CountryOut
-    contact: ContactOut
 
     class Config:
         orm_mode = True

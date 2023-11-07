@@ -14,44 +14,56 @@ CREATE TABLE IF NOT EXISTS countries (
 	date_insert TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS customers_status (
+	id_customer_status SERIAL PRIMARY KEY,
+	slug VARCHAR(64)
+);
+
+
 CREATE TABLE IF NOT EXISTS customers (
 	id_customer SERIAL PRIMARY KEY,
-	login VARCHAR(10) NOT NULL,
+	id_customer_status INT NOT NULL,
+	login VARCHAR(64) NOT NULL,
 	password VARCHAR(64) NOT NULL,
-	is_active BOOLEAN DEFAULT TRUE,
-	date_insert TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS persons (
-	id_person SERIAL PRIMARY KEY,
-	id_country_nationality INT NOT NULL,
-	id_address_birth INT NOT NULL,
-	id_address_residence INT NOT NULL,
-	id_contact INT NOT NULL,
 	first_name VARCHAR(64) NOT NULL, 
 	last_name VARCHAR(64) NOT NULL,
-	date_insert TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	date_insert TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT fk_customer_status FOREIGN KEY(id_customer_status) REFERENCES customers_status(id_customer_status)
 );
 
-/*
 CREATE TABLE IF NOT EXISTS adresses (
 	id_address SERIAL PRIMARY KEY,
-	street VARCHAR(64) NOT NULL,
-	city VARCHAR(64) NOT NULL,
+	id_country INT NOT NULL,
+	street VARCHAR(64),
+	city VARCHAR(64),
+	zip_code VARCHAR(64),
+	CONSTRAINT fk_country
+      		FOREIGN KEY(id_country)
+	  	REFERENCES countries(id_country)
 );
 
-CREATE TABLE IF NOT EXISTS contacts (
+CREATE TABLE IF NOT EXISTS phones (
 	id_contact SERIAL PRIMARY KEY,
 	id_customer INT NOT NULL,
 	phone VARCHAR(16) NOT NULL,
 	is_phone_active BOOLEAN NOT NULL,
-	email VARCHAR(320) NOT NULL,
-	is_email_active BOOLEAN NOT NULL,
 	is_active BOOLEAN NOT NULL,
-	date_phone TIMESTAMP,
+	date_validation TIMESTAMP,
 	date_insert TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT fk_customer
       		FOREIGN KEY(id_customer)
 	  	REFERENCES customers(id_customer)
 );
-*/
+
+CREATE TABLE IF NOT EXISTS emails (
+	id_email SERIAL PRIMARY KEY,
+	id_customer INT NOT NULL,
+	email VARCHAR(320) NOT NULL,
+	is_email_active BOOLEAN NOT NULL,
+	is_active BOOLEAN NOT NULL,
+	date_validation TIMESTAMP,
+	date_insert TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT fk_customer
+      		FOREIGN KEY(id_customer)
+	  	REFERENCES customers(id_customer)
+);
