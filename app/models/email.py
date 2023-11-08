@@ -8,6 +8,7 @@ from sqlalchemy import (
 )
 
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 
 from app.core.base import Base
 
@@ -23,4 +24,4 @@ class Email(Base):
     is_email_active = Column(Boolean(), default=False, nullable=False)
 
     date_validation= Column(DateTime)
-    date_insert = Column(DateTime)
+    date_insert = Column(DateTime, server_default=func.now())

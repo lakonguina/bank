@@ -43,7 +43,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
-def create_access_token(subject: str) -> str:
+def create_token(subject: str) -> str:
     expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 
     to_encode = {
@@ -74,16 +74,38 @@ def has_access(
             algorithms=settings.JWT_ALGORITHM,
         )
 
-        phone: str = payload.get("sub")
+        login: str = payload.get("sub")
         expire: datetime = payload.get("exp")
 
     except JWTError:
         raise credentials_exception
     
     customer = db.query(Customer)\
-            .filter(Customer.phone==phone)\
+            .filter(Customer.login==login)\
             .first()
 
-    print(customer)
-
     return customer
+
+def verify_email(
+    token: str,
+):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    try:
+        payload = jwt.decode(
+            token,
+            key=settings.SECRET_KEY,
+            algorithms=settings.JWT_ALGORITHM,
+        )
+
+        email: str = payload.get("sub")
+        expire: datetime = payload.get("exp")
+
+    except JWTError as err:
+        raise credentials_exception
+
+    return email 

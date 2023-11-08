@@ -24,4 +24,4 @@ class Phone(Base):
     is_phone_active = Column(Boolean(), default=False, nullable=False)
 
     date_validation= Column(DateTime)
-    date_insert = Column(DateTime)
+    date_insert = Column(DateTime, server_default=func.now(), nullable=False)

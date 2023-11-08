@@ -1,14 +1,14 @@
 from datetime import datetime
 from pydantic import BaseModel, EmailStr
 
-class EmailCreate(BaseModel):
+class EmailSend(BaseModel):
     email: EmailStr
 
-class EmailOut(EmailCreate):
+class EmailOut(EmailSend):
     is_email_active: bool
     is_active: bool
     date_validation: datetime | None = None
-    date_insert: datetime | None = None
+    date_insert: datetime
     
     class Config:
         orm_mode = True
