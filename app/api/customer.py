@@ -4,6 +4,7 @@ from fastapi import (
     APIRouter,
     Depends,
     HTTPException,
+    status,
 )
 
 from app.dependencies.security import (
@@ -17,7 +18,9 @@ from app.dependencies.session import get_db
 
 from app.models.contact import Contact
 from app.models.country import Country
-from app.models.customer import Customer
+from app.models.customer import Customer, CustomerStatus
+from app.models.phone import Phone
+from app.models.email import Email
 
 from app.schemas.customer import (
     CustomerCreate,
@@ -33,52 +36,73 @@ router = APIRouter()
 async def create_customer(customer: CustomerCreate, db: Session = Depends(get_db)):
     """Create a customer"""
 
-    # Check if phone not already active and validated
-    phone_exists = db.query(Contact)\
-        .filter(Contact.phone==customer.contact.phone)\
-        .filter(Contact.is_phone_active==True)\
+    phone = db.query(Phone)\
+        .filter(Phone.phone==customer.phone)\
+        .filter(Phone.is_phone_active==True)\
+        .filter(Phone.is_active==True)\
         .first()
 
-    if phone_exists:
+    if phone:
         raise HTTPException(
-            status_code=400,
-            detail="This phone is already registered and active."
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Phone is already registered and active."
         )
 
-    # Check if country exists
-    db_country = db.query(Country)\
-        .filter(Country.alpha3==customer.country.alpha3)\
+    email = db.query(Email)\
+        .filter(Email.email==customer.phone)\
+        .filter(Email.is_email_active==True)\
+        .filter(Email.is_active==True)\
         .first()
 
-    if not db_country:
+    if email:
         raise HTTPException(
-            status_code=400,
-            detail="This country does not exists."
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email is already registered and active."
         )
 
     # Create customer & contact
     hashed_password = get_password_hash(customer.password)
 
+    customer_status = db.query(CustomerStatus)\
+        .filter(CustomerStatus.slug=="waiting-for-email")\
+        .first()
+
+    print('_______________________________________________')
+    print(customer_status)
+    print('_______________________________________________')
+
     db_customer = Customer(
-        id_country=db_country.id_country,
+        login=customer.login,
+        password=hashed_password,
         first_name=customer.first_name,
         last_name=customer.last_name,
-        password=hashed_password,
+        id_customer_status=customer_status.id_customer_status,
     )
 
     db.add(db_customer)
     db.commit()
     db.refresh(db_customer)
 
-    db_contact = Contact(
+    db_phone = Phone(
         id_customer=db_customer.id_customer,
-        phone=customer.contact.phone
+        phone=customer.phone
     )
 
-    db.add(db_contact)
-    db.commit()
+    db_email= Email(
+        id_customer=db_customer.id_customer,
+        email=customer.email
+    )
 
-    db_customer.contact = db_contact
+    db.add(db_phone)
+    db.commit()
+    db.refresh(db_phone)
+
+    db.add(db_email)
+    db.commit()
+    db.refresh(db_email)
+
+    db_customer.phone = db_phone
+    db_customer.email= db_email
 
     return db_customer
 

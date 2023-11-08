@@ -19,18 +19,21 @@ from app.schemas.phone import (
 
 
 class CustomerCreate(BaseModel):
+    login: str
+    password: str
     first_name: str
     last_name: str
-    password: str
-    phone: str
     email: EmailStr
+    phone: str
+
 
 class CustomerOut(BaseModel):
+    login: str
     first_name: str
     last_name: str
-    is_active: bool
     date_insert: datetime
-    country: CountryOut
+    email: EmailOut
+    phone: PhoneOut
 
     class Config:
         orm_mode = True
