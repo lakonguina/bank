@@ -1,12 +1,5 @@
 version: '3'
 services:
-  app:
-    build: .
-    volumes:
-      - .:/app
-    ports:
-      - "8080:8080"
-
   db:
     image: postgres:15-bullseye
     restart: always
@@ -18,3 +11,14 @@ services:
       - '5432:5432'
     volumes:
       - ./sql:/usr/src/sql
+
+  api:
+    build: ./api
+    volumes:
+      - .:/api:/usr/src/api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    env_file:
+      - .env

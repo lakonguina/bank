@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 
-from app.core.base import Base
-from app.core.base import engine
+from api.core.base import Base
+from api.core.base import engine
 
-from app.api import customer
+from api.routes import customer
 
-app = FastAPI(
+api = FastAPI(
     title="Bank",
     description="Bank helps you do awesome stuff.",
     version="0.0.1",
@@ -21,6 +21,6 @@ app = FastAPI(
     },
 )
 
-app.include_router(customer.router, tags=["Customers"])
+api.include_router(customer.router, tags=["Customers"])
 
 Base.metadata.create_all(bind=engine)

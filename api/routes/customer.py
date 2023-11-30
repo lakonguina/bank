@@ -1,4 +1,3 @@
-import pytz
 from datetime import datetime
 
 from smtplib import SMTP
@@ -15,7 +14,9 @@ from fastapi import (
     status,
 )
 
-from app.dependencies.security import (
+from api.core.settings import settings
+
+from api.dependencies.security import (
     get_password_hash,
     verify_password,
     create_token,
@@ -23,53 +24,46 @@ from app.dependencies.security import (
     verify_email,
 )
 
-from app.dependencies.session import get_db
+from api.dependencies.session import get_db
 
-from app.models.customer import (
+from api.models.customer import (
     Customer,
     CustomerStatus,
 )
 
-from app.models.phone import Phone
-from app.models.email import Email
+from api.models.phone import Phone
+from api.models.email import Email
 
-from app.schemas.customer import (
+from api.schemas.customer import (
     CustomerCreate,
     CustomerOut,
     CustomerLogin,
 )
 
-from app.schemas.email import EmailSend
-
-from app.schemas.token import Token
-
+from api.schemas.email import EmailSend
+from api.schemas.token import Token
 
 router = APIRouter()
 
+
 def send_email(to: str):
-    try:
-        # Configurer les informations d'identification Gmail
-        gmail_user = 'laury.akonguina1@gmail.com'
-        gmail_password = 'imjv smlp pwro rtab'
+	try:
+		message = MIMEMultipart()
+		message['From'] = settings.MAIL_USER
+		message['To'] = to
+		message['Subject'] = "Test envoi"
+		body = MIMEText("Message de test", 'plain')
 
-        # Configurer le message
-        msg = MIMEMultipart()
-        msg['From'] = gmail_user
-        msg['To'] = to
-        msg['Subject'] = "Test envoi"
+		message.attach(body)
 
-        # Ajouter le corps du message
-        msg.attach(MIMEText("Message de test", 'plain'))
+		with SMTP(settings.MAIL_HOST, settings.MAIL_PORT) as server:
+			server.starttls()
+			server.login(settings.MAIL_USER, settings.MAIL_PASSWORD)
+			server.send_message(message)
 
-        # Établir une connexion SMTP
-        with SMTP('smtp.gmail.com', 587) as server:
-            server.starttls()  # Activer le chiffrement TLS
-            server.login(gmail_user, gmail_password)
-            server.send_message(msg)
-
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=f"Erreur lors de l'envoi de l'email.")
+	except Exception as e:
+		print(e)
+		raise HTTPException(status_code=500, detail=f"Erreur lors de l'envoi de l'email.")
 
 @router.post("/customer/register", response_model=CustomerOut)
 def create_customer(
@@ -77,7 +71,6 @@ def create_customer(
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
 ):
-    """Create a customer"""
     phone = db.query(Phone)\
         .filter(Phone.phone==customer.phone)\
         .first()
@@ -225,7 +218,7 @@ def customer_verify_email(
         )
 
     email.is_email_active = True
-    email.date_validation = datetime.now(pytz.utc)
+    email.date_validation = datetime.now()
 
     db.add(email)
     db.commit()

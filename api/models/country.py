@@ -9,7 +9,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from app.core.base import Base
+from api.core.base import Base
 
 
 class Country(Base):

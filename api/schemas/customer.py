@@ -2,8 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, EmailStr
 
-from app.schemas.email import EmailOut
-from app.schemas.phone import PhoneOut
+from api.schemas.email import EmailOut
+from api.schemas.phone import PhoneOut
 
 
 class CustomerStatus(BaseModel):

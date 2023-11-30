@@ -28,9 +28,9 @@ from fastapi.security import (
     HTTPBearer,
 )
 
-from app.dependencies.session import get_db
-from app.core.settings import settings
-from app.models.customer import Customer
+from api.dependencies.session import get_db
+from api.core.settings import settings
+from api.models.customer import Customer
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
