@@ -1,6 +1,10 @@
-# Import schemas into database
-`docker compose exec -i -T db psql -U test < sql/schemas/*.sql`
-`docker compose exec -it db /bin/sh "/usr/src/sql/purge.sh"`
+# Get started
+- Clone this repo
+- Copy & rename `.env-template` to `.env` and fill it
+- `docker compose up --build`
 
-# Import csv data into database
-`\copy countries '/usr/src/sql/data/prod/frontoffice/countries.csv' delimiter ',' csv header;`
+Head over `0.0.0.0:8080/docs` for documentation
+
+# Command
+- Purge & update sql schemas: `docker compose exec -it db /bin/sh "/usr/src/sql/purge.sh"`
+- Import data into db: `docker compose exec -it db /bin/sh "/usr/src/sql/import.sh"`
