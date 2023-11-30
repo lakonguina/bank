@@ -3,7 +3,7 @@ from pydantic import BaseSettings
 
 class Settings(BaseSettings):
     # Security
-    SECRET_KEY: str = "secret_key"
+    SECRET_KEY: str = os.environ.get("API_SECRET_KEY")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 60
     JWT_ALGORITHM: str = "HS256"
 
