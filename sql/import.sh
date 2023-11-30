@@ -1,31 +1,30 @@
 #!/bin/bash
 
-# Informations de connexion à la base de données
+# Credentials
 DB_USER="$POSTGRES_USER"
 DB_PASSWORD="$POSTGRES_PASSWORD"
-echo $DB_USER
 
-# Répertoire contenant les répertoires des bases de données
+# Path containing datas 
 BASE_DIR="/usr/src/sql/data/prod/"
 
-# Parcours des répertoires pour chaque base de données
 for db_dir in ${BASE_DIR}*; do
     if [ -d "$db_dir" ]; then
-        db_name=$(basename "$db_dir")
-        echo "Traitement de la base de données : $db_name"
 
-        # Connexion à la base de données correspondante et insertion des fichiers CSV
+        db_name=$(basename "$db_dir")
+        echo "Treating: $db_name"
+
+        # Connected to the corresponding database and insert file
         for file in "${db_dir}"/*.csv; do
             if [ -f "$file" ]; then
                 table_name=$(basename "$file" .csv)
 
-                # Commande d'insertion SQL pour PostgreSQL
+                # Commande to insert into PostgreSQL
                 psql --username "$DB_USER" -d "$db_name" -c "\copy $table_name FROM '$file' CSV HEADER"
 
                 if [ $? -eq 0 ]; then
-                    echo "Le fichier $file a été inséré dans la table $table_name de la base de données $db_name."
+                    echo "$file has been inserted into $db_name.$table_name"
                 else
-                    echo "Erreur lors de l'insertion du fichier $file dans la table $table_name de la base de données $db_name."
+                    echo "Erreur while inserting file $file  in $db_name.$table_name"
                 fi   
             fi
         done
