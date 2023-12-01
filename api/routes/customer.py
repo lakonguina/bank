@@ -81,8 +81,8 @@ def register_customer(
 	db_customer = create_customer(db, customer)
 
 	# Create phone and email
-	create_email(db, customer.id_customer, customer.email)
-	create_phone(db, customer.id_customer, customer.phone)
+	create_email(db, db_customer.id_customer, customer.email)
+	create_phone(db, db_customer.id_customer, customer.phone)
 
 	# Send email to validate email
 	"""
