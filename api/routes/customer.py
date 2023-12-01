@@ -20,11 +20,7 @@ from api.dependencies.security import (
 )
 
 from api.dependencies.session import get_db
-from api.dependencies.email import send_email
-
-from api.models.customer import Customer
-from api.models.phone import Phone
-from api.models.email import Email
+from api.dependencies.email import validate_email 
 
 from api.schemas.customer import (
     CustomerCreate,
@@ -78,20 +74,25 @@ def register_customer(
 		)
 
 	# Create customer
+	print("Create customer")
 	db_customer = create_customer(db, customer)
 
 	# Create phone and email
+	print("Create email")
 	create_email(db, db_customer.id_customer, customer.email)
+
+	print("Create phone")
 	create_phone(db, db_customer.id_customer, customer.phone)
 
 	# Send email to validate email
-	"""
+	token = create_token(customer.email)
+	url = f"http://localhost:8080/customer/email/verify/{token}"
+
 	background_tasks.add_task(
-		send_email,
+		validate_email,
 		customer.email,
-		"Validate email",
+		url,
 	)
-	"""
 
 	# TODO: Send message to validate phone
 
@@ -182,6 +183,4 @@ def customer_verify_email(
     db.commit()
     db.refresh(db_email)
     
-    print(email.__dict__)
-
     return {"msg": "Email validated"}

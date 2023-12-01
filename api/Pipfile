@@ -12,6 +12,8 @@ sqlalchemy = "==1.4.46"
 passlib = "==1.7.4"
 python-jose = "==3.3.0"
 psycopg2 = "==2.9.5"
+emails = "*"
+jinja2 = "*"
 
 [dev-packages]
 

@@ -1,7 +1,9 @@
-from smtplib import SMTP
+from pathlib import Path
 
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+from emails import Message
+from emails.template import JinjaTemplate
+
+from api.core.settings import settings
 
 def send_email(
 	to: str,
@@ -9,20 +11,37 @@ def send_email(
 	template: str,
 	context: dict[str, str]
 ):
-	try:
-		message = MIMEMultipart()
-		message['From'] = settings.MAIL_USER
-		message['To'] = to
-		message['Subject'] = subject
+	message = Message(
+		subject=JinjaTemplate(subject),
+		html=JinjaTemplate(template),
+		mail_from=(settings.MAIL_NAME, settings.MAIL_USER),
+	)
 
-		body = MIMEText("Message de test", 'plain')
+	smtp = {
+		"host": settings.MAIL_HOST,
+		"port": settings.MAIL_PORT,
+		"user": settings.MAIL_USER,
+		"password": settings.MAIL_PASSWORD,
+		"tls": True,
+	}
 
-		message.attach(body)
+	response = message.send(to=to, render=context, smtp=smtp)
 
-		with SMTP(settings.MAIL_HOST, settings.MAIL_PORT) as server:
-			server.starttls()
-			server.login(settings.MAIL_USER, settings.MAIL_PASSWORD)
-			server.send_message(message)
+	print(response)
 
-	except Exception as e:
-		print(e)
+
+def validate_email(
+	to: str,
+	url: str,
+):
+	subject = f"{settings.PROJECT_NAME} - Validate your email"
+
+	with open(Path(settings.TEMPLATES_DIR) / "validate_email.html") as f:
+		template_str = f.read()
+
+	send_email(
+		to=to,
+		subject=subject,
+		template=template_str,
+		context={"project_name": settings.PROJECT_NAME, "url": url},
+	)

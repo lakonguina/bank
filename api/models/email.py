@@ -19,7 +19,7 @@ class Email(Base):
     id_email= Column(Integer, primary_key=True, index=True)
     id_customer = Column(Integer, ForeignKey("customers.id_customer"))
 
-    email = Column(String(16), nullable=False)
+    email = Column(String(320), nullable=False)
     is_active = Column(Boolean(), default=True, nullable=False)
     is_email_active = Column(Boolean(), default=False, nullable=False)
 
