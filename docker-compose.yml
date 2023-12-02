@@ -14,9 +14,9 @@ services:
       - ./sql:/usr/src/sql
 
   api:
-    build: ./api
-    volumes:
-      - .:/api:/usr/src/api
+    build:
+      context: ./api
+      dockerfile: ./Dockerfile
     ports:
       - "8080:8080"
     depends_on:
