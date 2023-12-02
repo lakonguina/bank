@@ -17,4 +17,4 @@ RUN pipenv install --system
 # This workdir to launch app
 WORKDIR /app/
 
-CMD ["uvicorn", "api.main:api", "--reload", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "api.main:api", "--reload", "--host", "0.0.0.0", "--port", "3000"]

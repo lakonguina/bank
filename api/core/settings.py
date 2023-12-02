@@ -4,6 +4,9 @@ from pydantic import BaseSettings
 
 class Settings(BaseSettings):
 	PROJECT_NAME: str = "Bank" 
+	URL: str = os.environ.get("API_URL")
+	PORT: str = os.environ.get("API_PORT")
+	URI: str = f"{URL}:{PORT}"
 
 	# Security
 	SECRET_KEY: str = os.environ.get("API_SECRET_KEY")
@@ -18,6 +21,7 @@ class Settings(BaseSettings):
 	POSTGRES_DB: str = os.environ.get("POSTGRES_DB")
 
 	# SMTP
+	# MAIL_TLS: str = os.environ.get("MAIL_TLS") TODO: Handle this with env
 	MAIL_HOST: str = os.environ.get("MAIL_HOST")
 	MAIL_PORT: int  = os.environ.get("MAIL_PORT")
 	MAIL_USER: str = os.environ.get("MAIL_USER")

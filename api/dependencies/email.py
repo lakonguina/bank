@@ -22,7 +22,7 @@ def send_email(
 		"port": settings.MAIL_PORT,
 		"user": settings.MAIL_USER,
 		"password": settings.MAIL_PASSWORD,
-		"tls": True,
+		"tls": False, #TODO: Handle this with env
 	}
 
 	response = message.send(to=to, render=context, smtp=smtp)

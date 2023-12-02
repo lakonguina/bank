@@ -1,6 +1,5 @@
 from datetime import datetime
 
-
 from sqlalchemy.orm import Session
 
 from fastapi import (
@@ -50,7 +49,6 @@ from api.crud.phone import (
 
 router = APIRouter()
 
-
 @router.post("/customer/register", response_model=None)
 def register_customer(
     customer: CustomerCreate,
@@ -75,19 +73,15 @@ def register_customer(
 		)
 
 	# Create customer
-	print("Create customer")
 	db_customer = create_customer(db, customer)
 
 	# Create phone and email
-	print("Create email")
 	create_email(db, db_customer.id_customer, customer.email)
-
-	print("Create phone")
 	create_phone(db, db_customer.id_customer, customer.phone)
 
 	# Send email to validate email
 	token = create_token(customer.email)
-	url = f"http://localhost:8080/customer/email/verify/{token}"
+	url = f"{settings.URI}/customer/email/verify/{token}"
 
 	background_tasks.add_task(
 		validate_email,
@@ -96,7 +90,6 @@ def register_customer(
 	)
 
 	# TODO: Send message to validate phone
-
 	return {"msg": "Customer created"}
 
 
@@ -126,7 +119,7 @@ def login_customer(customer: CustomerLogin, db: Session = Depends(get_db)):
     }
 
 
-@router.post("/customer/email/send", response_model=None)
+@router.get("/customer/email/send", response_model=None)
 def send_email_customer(
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
@@ -140,48 +133,44 @@ def send_email_customer(
 			detail="Email is already validated."
 		)
 
+	# Send email to validate email
 	token = create_token(email.email)
-
-	url = f"http://localhost:8080/customer/email/verify/{token}"
-
-	print('______________________________________________________________')
-	print(url)
-	print('______________________________________________________________')
-
-	"""
+	url = f"{settings.URI}/customer/email/verify/{token}"
+	
 	background_tasks.add_task(
-		send_email,
-		customer.email,
-		"Validate email",
+		validate_email,
+		email.email,
+		url,
 	)
-	"""
+
 	return {"msg": "Email sended"}
+
 
 @router.get("/customer/email/verify/{token}", response_model=None)
 def customer_verify_email(
     token: str,
     db: Session = Depends(get_db),
 ):
-    email = verify_email(token)
-    db_email = get_email(db, email)
+	email = verify_email(token)
+	db_email = get_email(db, email)
 
-    if not db_email:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email not found."
-        )
+	if not db_email:
+		raise HTTPException(
+			status_code=status.HTTP_400_BAD_REQUEST,
+			detail="Email not found."
+		)
 
-    if db_email.is_email_active:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already validated."
-        )
+	if db_email.is_email_active:
+		raise HTTPException(
+			status_code=status.HTTP_400_BAD_REQUEST,
+			detail="Email already validated."
+		)
 
-    db_email.is_email_active = True
-    db_email.date_validation = datetime.now()
+	db_email.is_email_active = True
+	db_email.date_validation = datetime.now()
 
-    db.add(db_email)
-    db.commit()
-    db.refresh(db_email)
-    
-    return {"msg": "Email validated"}
+	db.add(db_email)
+	db.commit()
+	db.refresh(db_email)
+
+	return {"msg": "Email validated"}
