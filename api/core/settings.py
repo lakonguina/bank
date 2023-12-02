@@ -2,6 +2,11 @@ import os
 
 from pydantic import BaseSettings
 
+def get_bool(var: str):
+	if var == "true":
+		return True
+	return False
+
 class Settings(BaseSettings):
 	PROJECT_NAME: str = "Bank" 
 	URL: str = os.environ.get("API_URL")
@@ -21,7 +26,7 @@ class Settings(BaseSettings):
 	POSTGRES_DB: str = os.environ.get("POSTGRES_DB")
 
 	# SMTP
-	# MAIL_TLS: str = os.environ.get("MAIL_TLS") TODO: Handle this with env
+	MAIL_TLS: bool = get_bool(os.environ.get("MAIL_TLS"))
 	MAIL_HOST: str = os.environ.get("MAIL_HOST")
 	MAIL_PORT: int  = os.environ.get("MAIL_PORT")
 	MAIL_USER: str = os.environ.get("MAIL_USER")
