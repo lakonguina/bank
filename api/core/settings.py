@@ -1,4 +1,5 @@
 import os
+
 from pydantic import BaseSettings
 
 class Settings(BaseSettings):
@@ -24,7 +25,7 @@ class Settings(BaseSettings):
 	MAIL_PASSWORD: str = os.environ.get("MAIL_PASSWORD")
 
 	# TEMPLATES
-	TEMPLATES_DIR: str = '/api/api/templates'
+	TEMPLATES_DIR: str = '/app/api/templates'
 
 	class Config:
 		case_sensitive = True

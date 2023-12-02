@@ -23,6 +23,8 @@ services:
       - db
     env_file:
       - .env
+    volumes:
+      - ./api:/app/api
 
 volumes:
   db:
