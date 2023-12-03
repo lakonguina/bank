@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.core.base import Base
 from api.core.base import engine
 
-from api.routes import customer
+from api.routes import user
 
 api = FastAPI(
     title="Bank",
@@ -30,6 +30,6 @@ api.add_middleware(
     allow_headers=["*"],
 )
 
-api.include_router(customer.router, tags=["Customers"])
+api.include_router(user.router, tags=["Users"])
 
 Base.metadata.create_all(bind=engine)

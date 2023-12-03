@@ -19,8 +19,8 @@
 		}
 
 		var payload = {
-    		login: login,
-    		first_name: firstname,
+			login: login,
+			first_name: firstname,
 			last_name: lastname,
 			email: email,
 			phone: phone,
@@ -28,10 +28,10 @@
 			passwordConfirm: passwordConfirm
 		};
 
-		fetch("http://0.0.0.0:3000/customer/register", {
-    		method: "POST",
+		fetch("http://0.0.0.0:3000/user/register", {
+			method: "POST",
 			headers: {"content-type": "application/json"},
-    		body: JSON.stringify(payload)
+			body: JSON.stringify(payload)
 		})
 		.then(function(result){
 			return result.json();

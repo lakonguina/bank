@@ -14,21 +14,21 @@ CREATE TABLE IF NOT EXISTS countries (
 	date_insert TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS customers_status (
-	id_customer_status SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS users_status (
+	id_user_status SERIAL PRIMARY KEY,
 	slug VARCHAR(64)
 );
 
 
-CREATE TABLE IF NOT EXISTS customers (
-	id_customer SERIAL PRIMARY KEY,
-	id_customer_status INT NOT NULL,
+CREATE TABLE IF NOT EXISTS users (
+	id_user SERIAL PRIMARY KEY,
+	id_user_status INT NOT NULL,
 	login VARCHAR(64) NOT NULL,
 	password VARCHAR(64) NOT NULL,
 	first_name VARCHAR(64) NOT NULL, 
 	last_name VARCHAR(64) NOT NULL,
 	date_insert TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	CONSTRAINT fk_customer_status FOREIGN KEY(id_customer_status) REFERENCES customers_status(id_customer_status)
+	CONSTRAINT fk_user_status FOREIGN KEY(id_user_status) REFERENCES users_status(id_user_status)
 );
 
 CREATE TABLE IF NOT EXISTS addresses (
@@ -42,22 +42,22 @@ CREATE TABLE IF NOT EXISTS addresses (
 
 CREATE TABLE IF NOT EXISTS phones (
 	id_phone SERIAL PRIMARY KEY,
-	id_customer INT NOT NULL,
+	id_user INT NOT NULL,
 	phone VARCHAR(16) NOT NULL,
 	is_active BOOLEAN NOT NULL DEFAULT TRUE,
 	is_phone_active BOOLEAN NOT NULL DEFAULT FALSE,
 	date_validation TIMESTAMP,
 	date_insert TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	CONSTRAINT fk_customer FOREIGN KEY(id_customer) REFERENCES customers(id_customer)
+	CONSTRAINT fk_user FOREIGN KEY(id_user) REFERENCES users(id_user)
 );
 
 CREATE TABLE IF NOT EXISTS emails (
 	id_email SERIAL PRIMARY KEY,
-	id_customer INT NOT NULL,
+	id_user INT NOT NULL,
 	email VARCHAR(320) NOT NULL,
 	is_active BOOLEAN NOT NULL DEFAULT TRUE,
 	is_email_active BOOLEAN NOT NULL DEFAULT FALSE,
 	date_validation TIMESTAMP,
 	date_insert TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	CONSTRAINT fk_customer FOREIGN KEY(id_customer) REFERENCES customers(id_customer)
+	CONSTRAINT fk_user FOREIGN KEY(id_user) REFERENCES users(id_user)
 );

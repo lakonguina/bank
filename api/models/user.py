@@ -13,12 +13,12 @@ from sqlalchemy.sql import func
 from api.core.base import Base
 
 
-class Customer(Base):
-    __tablename__ = "customers"
+class User(Base):
+    __tablename__ = "users"
 
-    id_customer = Column(Integer, primary_key=True, index=True)
-    id_customer_status = Column(Integer, ForeignKey("customers_status.id_customer_status"))
-    customer_status = relationship("CustomerStatus")
+    id_user = Column(Integer, primary_key=True, index=True)
+    id_user_status = Column(Integer, ForeignKey("users_status.id_user_status"))
+    user_status = relationship("UserStatus")
 
     login = Column(String(64), nullable=False)
     first_name = Column(String(64), nullable=False)
@@ -27,8 +27,8 @@ class Customer(Base):
 
     date_insert = Column(DateTime, server_default=func.now())
 
-class CustomerStatus(Base):
-    __tablename__ = "customers_status"
+class UserStatus(Base):
+    __tablename__ = "users_status"
 
-    id_customer_status = Column(Integer, primary_key=True, index=True)
+    id_user_status = Column(Integer, primary_key=True, index=True)
     slug = Column(String(64), nullable=False)

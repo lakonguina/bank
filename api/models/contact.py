@@ -17,7 +17,7 @@ class Contact(Base):
     __tablename__ = "contacts"
 
     id_contact = Column(Integer, primary_key=True, index=True)
-    id_customer = Column(Integer, ForeignKey("customers.id_customer"))
+    id_user = Column(Integer, ForeignKey("users.id_user"))
 
     phone = Column(String(16), index=True, nullable=False)
     is_phone_active = Column(Boolean(), default=False, nullable=False)

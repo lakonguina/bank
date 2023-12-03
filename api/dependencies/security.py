@@ -30,7 +30,7 @@ from fastapi.security import (
 
 from api.dependencies.session import get_db
 from api.core.settings import settings
-from api.models.customer import Customer
+from api.models.user import User
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -59,7 +59,7 @@ def create_token(subject: str) -> str:
 def has_access(
     access_token: HTTPAuthorizationCredentials = Depends(http_bearer),
     db: Session = Depends(get_db),
-) -> Customer:
+) -> User:
 
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -80,11 +80,11 @@ def has_access(
     except JWTError:
         raise credentials_exception
     
-    customer = db.query(Customer)\
-            .filter(Customer.login==login)\
+    user = db.query(User)\
+            .filter(User.login==login)\
             .first()
 
-    return customer
+    return user
 
 def verify_email(
     token: str,

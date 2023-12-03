@@ -17,7 +17,7 @@ class Email(Base):
     __tablename__ = "emails"
 
     id_email= Column(Integer, primary_key=True, index=True)
-    id_customer = Column(Integer, ForeignKey("customers.id_customer"))
+    id_user = Column(Integer, ForeignKey("users.id_user"))
 
     email = Column(String(320), nullable=False)
     is_active = Column(Boolean(), default=True, nullable=False)
