@@ -1,8 +1,8 @@
 <script>
-	let error;
+	let detail;
 
 	async function register(event) {
-		error = "";
+		detail = null;
 
 		const data = new FormData(event.target)
 
@@ -15,7 +15,7 @@
 		const passwordConfirm = data.get('passwordConfirm');
 
 		if (password !== passwordConfirm) {
-			error = "Passwords are different";
+			detail = "Passwords are different";
 		}
 
 		var payload = {
@@ -33,11 +33,11 @@
 			headers: {"content-type": "application/json"},
     		body: JSON.stringify(payload)
 		})
-		.then(function(res){
-			return res.json();
+		.then(function(result){
+			return result.json();
 		})
 		.then(function(data){
-			console.log(JSON.stringify(data))
+			detail = data["detail"];
 		})
 	}
 </script>
@@ -79,8 +79,8 @@
 
 	<button type="submit">Register</button>
 
-	{#if error}
-		<p>{error}</p>
+	{#if detail}
+		<p>{detail}</p>
 	{/if}
 
 </form>

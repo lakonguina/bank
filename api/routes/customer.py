@@ -90,7 +90,7 @@ def register_customer(
 	)
 
 	# TODO: Send message to validate phone
-	return {"msg": "Customer created"}
+	return {"detail": "Customer created check your email for validation"}
 
 
 @router.post("/customer/login", response_model=Token)
@@ -143,7 +143,7 @@ def send_email_customer(
 		url,
 	)
 
-	return {"msg": "Email sended"}
+	return {"detail": "Email sended"}
 
 
 @router.get("/customer/email/verify/{token}", response_model=None)
@@ -173,4 +173,4 @@ def customer_verify_email(
 	db.commit()
 	db.refresh(db_email)
 
-	return {"msg": "Email validated"}
+	return {"detail": "Email validated"}
