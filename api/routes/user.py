@@ -50,6 +50,10 @@ from api.crud.phone import (
 
 router = APIRouter()
 
+@router.get("/", response_model=None)
+def root():
+	return {"detail": "Mounted"}
+
 @router.post("/user/register", response_model=None)
 def user_register(
     user: UserCreate,
