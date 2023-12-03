@@ -24,8 +24,8 @@ from api.dependencies.email import validate_email
 
 from api.schemas.customer import (
     CustomerCreate,
-    CustomerOut,
     CustomerLogin,
+    CustomerOut,
 )
 
 from api.schemas.token import Token
@@ -43,6 +43,7 @@ from api.crud.email import (
 
 from api.crud.phone import (
 	get_phone,
+	get_phone_by_customer,
 	create_phone,
 )
 
@@ -50,7 +51,7 @@ from api.crud.phone import (
 router = APIRouter()
 
 @router.post("/customer/register", response_model=None)
-def register_customer(
+def customer_register(
     customer: CustomerCreate,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
@@ -90,6 +91,7 @@ def register_customer(
 	)
 
 	# TODO: Send message to validate phone
+
 	return {"detail": "Customer created check your email for validation"}
 
 
@@ -119,8 +121,34 @@ def login_customer(customer: CustomerLogin, db: Session = Depends(get_db)):
     }
 
 
+@router.post("/customer/login", response_model=Token)
+def customer_login(customer: CustomerLogin, db: Session = Depends(get_db)):
+    db_customer = get_customer_by_login(db, customer.login)
+
+    if not db_customer:
+        raise HTTPException(
+			status_code=status.HTTP_400_BAD_REQUEST,
+			detail="Wrong login."
+		)
+    
+    password_is_good = verify_password(customer.password, db_customer.password)
+
+    if not password_is_good:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Wrong password."
+        )
+     
+    access_token = create_token(db_customer.login)
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
+
+
 @router.get("/customer/email/send", response_model=None)
-def send_email_customer(
+def customer_send_email(
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     customer = Depends(has_access),
@@ -174,3 +202,13 @@ def customer_verify_email(
 	db.refresh(db_email)
 
 	return {"detail": "Email validated"}
+
+@router.get("/customer/information", response_model=CustomerOut)
+def customer_information(
+    db: Session = Depends(get_db),
+    customer = Depends(has_access),
+):
+	customer.email = get_email_by_customer(db, customer.id_customer)
+	customer.phone = get_phone_by_customer(db, customer.id_customer)
+	
+	return customer

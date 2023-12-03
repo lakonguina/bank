@@ -6,6 +6,9 @@ from api.models.phone import Phone
 def get_phone(db: Session, phone: str) -> Phone | None:
 	return db.query(Phone).filter(Phone.phone == phone, Phone.is_active==True).first()
 
+def get_phone_by_customer(db: Session, id_customer: int) -> Phone | None:
+	return db.query(Phone).filter(Phone.id_customer == id_customer, Phone.is_active==True).first()
+
 def create_phone(db: Session, id_customer: int, phone: str) -> Phone:
 	db_phone = Phone(
 		id_customer=id_customer,
