@@ -51,8 +51,6 @@ services:
     volumes:
       - ./front:/app/front
 
-    
-
 volumes:
   db:
   smtp4dev-data:
