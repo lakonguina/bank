@@ -11,7 +11,7 @@ RUN pip install pipenv
 
 COPY . .
 
-RUN pipenv install --system
+RUN pipenv install --dev --system
 
 
 # This workdir to launch app

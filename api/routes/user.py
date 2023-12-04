@@ -50,10 +50,6 @@ from api.crud.phone import (
 
 router = APIRouter()
 
-@router.get("/", response_model=None)
-def root():
-	return {"detail": "Mounted"}
-
 @router.post("/user/register", response_model=None)
 def user_register(
     user: UserCreate,
@@ -61,20 +57,20 @@ def user_register(
     db: Session = Depends(get_db)
 ):
 	# Check if phone and email are not used
+	email = get_email(db, user.email)
+
+	if email:
+		raise HTTPException(
+			status_code=status.HTTP_409_CONFLICT,
+			detail="Email is already registered and active."
+		)
+
 	phone = get_phone(db, user.phone)
 
 	if phone:
 		raise HTTPException(
-			status_code=status.HTTP_400_BAD_REQUEST,
+			status_code=status.HTTP_409_CONFLICT,
 			detail="Phone is already registered and active."
-		)
-
-	email = get_phone(db, user.email)
-
-	if email:
-		raise HTTPException(
-			status_code=status.HTTP_400_BAD_REQUEST,
-			detail="Email is already registered and active."
 		)
 
 	# Create user
