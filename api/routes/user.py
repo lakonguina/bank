@@ -15,20 +15,27 @@ from api.core.settings import settings
 from api.dependencies.security import (
     verify_password,
     create_token,
+    get_token,
     has_access,
-    verify_email,
+	get_password_hash,
 )
 
 from api.dependencies.session import get_db
-from api.dependencies.email import validate_email 
+from api.dependencies.email import (
+	validate_email,
+	reset_password,
+)
 
 from api.schemas.user import (
     UserCreate,
     UserLogin,
     UserOut,
+	UserReset,
+	UserResetPassword,
 )
 
 from api.schemas.token import Token
+from api.schemas.detail import Detail
 
 from api.crud.user import (
 	create_user,
@@ -50,7 +57,7 @@ from api.crud.phone import (
 
 router = APIRouter()
 
-@router.post("/user/register", response_model=None)
+@router.post("/user/register", response_model=Detail)
 def user_register(
     user: UserCreate,
     background_tasks: BackgroundTasks,
@@ -96,32 +103,6 @@ def user_register(
 
 
 @router.post("/user/login", response_model=Token)
-def login_user(user: UserLogin, db: Session = Depends(get_db)):
-    db_user = get_user_by_login(db, user.login)
-
-    if not db_user:
-        raise HTTPException(
-			status_code=status.HTTP_400_BAD_REQUEST,
-			detail="Wrong login."
-		)
-    
-    password_is_good = verify_password(user.password, db_user.password)
-
-    if not password_is_good:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Wrong password."
-        )
-     
-    access_token = create_token(db_user.login)
-    
-    return {
-        "access_token": access_token,
-        "token_type": "bearer"
-    }
-
-
-@router.post("/user/login", response_model=Token)
 def user_login(user: UserLogin, db: Session = Depends(get_db)):
     db_user = get_user_by_login(db, user.login)
 
@@ -147,7 +128,7 @@ def user_login(user: UserLogin, db: Session = Depends(get_db)):
     }
 
 
-@router.get("/user/email/send", response_model=None)
+@router.get("/user/email/send/verification-email/", response_model=Detail)
 def user_send_email(
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
@@ -179,7 +160,7 @@ def user_verify_email(
     token: str,
     db: Session = Depends(get_db),
 ):
-	email = verify_email(token)
+	email = get_token(token)
 	db_email = get_email(db, email)
 
 	if not db_email:
@@ -199,7 +180,6 @@ def user_verify_email(
 
 	db.add(db_email)
 	db.commit()
-	db.refresh(db_email)
 
 	return {"detail": "Email validated"}
 
@@ -212,3 +192,60 @@ def user_information(
 	user.phone = get_phone_by_user(db, user.id_user)
 	
 	return user
+
+
+@router.post("/user/email/send/reset-password", response_model=Detail)
+def user_reset_password_by_email(
+	login: UserReset,	
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
+	user = get_user_by_login(db, login.login)
+	email = get_email_by_user(db, user.id_user)
+
+	if not user:
+		raise HTTPException(
+			status_code=status.HTTP_400_BAD_REQUEST,
+			detail="Login not found."
+		)
+
+	token = create_token(login.login)
+	url = f"{settings.URI}/user/reset-password/{token}"
+
+	background_tasks.add_task(
+		reset_password,
+		email.email,
+		url,
+	)
+	
+	return {"detail": "Your password reset link as been sent at your email"}
+
+
+@router.post("/user/phone/send/reset-password", response_model=Detail)
+def user_reset_password_by_phone(
+	login: UserReset,	
+):
+	# TODO: Handle reset by password
+
+
+	return {"msg": "Your password reset link as been sent at your phone"}
+
+
+@router.post("/user/reset-password/{token}", response_model=Detail)
+def user_reset_password(
+    token: str,
+	password: UserResetPassword,
+    db: Session = Depends(get_db),
+):
+	# JWT pass as a string
+	login = get_token(token)
+
+	user = get_user_by_login(db, login)
+
+	hashed_password = get_password_hash(password.password)
+	user.password = hashed_password
+
+	db.add(user)
+	db.commit()
+
+	return {"detail": "Password updated"}

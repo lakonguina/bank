@@ -16,15 +16,25 @@ class UserStatus(BaseModel):
     class Config:
         orm_mode = True
 
-class UserLogin(BaseModel):
+
+class UserReset(BaseModel):
     login: str = Field(title="Login of the user", max_length=64)
+
+
+class UserResetPassword(BaseModel):
     password: str = Field(title="Password of the user", max_length=64)
+
+
+class UserLogin(UserResetPassword, UserReset):
+	pass
+
 
 class UserCreate(UserLogin):
     first_name: str = Field(title="Only the first first name of the user", max_length=64)
     last_name: str = Field(title="Last name of the user", max_length=64)
     email: EmailStr = Field(title="Email of the user")
     phone: str = Field(title="Phone number of the user", max_length=16)
+
 
 class UserOut(BaseModel):
     login: str

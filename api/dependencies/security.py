@@ -36,12 +36,19 @@ from api.models.user import User
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 http_bearer =  HTTPBearer()
 
+credentials_exception = HTTPException(
+	status_code=status.HTTP_401_UNAUTHORIZED,
+	detail="Could not validate credentials",
+	headers={"WWW-Authenticate": "Bearer"},
+)
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
+
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
+
 
 def create_token(subject: str) -> str:
     expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -60,13 +67,6 @@ def has_access(
     access_token: HTTPAuthorizationCredentials = Depends(http_bearer),
     db: Session = Depends(get_db),
 ) -> User:
-
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-
     try:
         payload = jwt.decode(
             access_token.credentials,
@@ -86,26 +86,18 @@ def has_access(
 
     return user
 
-def verify_email(
-    token: str,
-):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+def get_token(token: str):
+	try:
+		payload = jwt.decode(
+			token,
+			key=settings.SECRET_KEY,
+			algorithms=settings.JWT_ALGORITHM,
+		)
 
-    try:
-        payload = jwt.decode(
-            token,
-            key=settings.SECRET_KEY,
-            algorithms=settings.JWT_ALGORITHM,
-        )
+		subject: Any = payload.get("sub")
+		expire: datetime = payload.get("exp")
 
-        email: str = payload.get("sub")
-        expire: datetime = payload.get("exp")
+	except JWTError as err:
+		raise credentials_exception
 
-    except JWTError as err:
-        raise credentials_exception
-
-    return email 
+	return subject

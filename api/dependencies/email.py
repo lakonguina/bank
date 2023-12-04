@@ -45,3 +45,19 @@ def validate_email(
 		template=template_str,
 		context={"project_name": settings.PROJECT_NAME, "url": url},
 	)
+
+def reset_password(
+	to: str,
+	url: str,
+):
+	subject = f"{settings.PROJECT_NAME} - Reset your password"
+
+	with open(Path(settings.TEMPLATES_DIR) / "reset_password.html") as f:
+		template_str = f.read()
+
+	send_email(
+		to=to,
+		subject=subject,
+		template=template_str,
+		context={"project_name": settings.PROJECT_NAME, "url": url},
+	)
