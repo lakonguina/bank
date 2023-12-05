@@ -1,35 +1,11 @@
 <script>
-	import { JWT } from '../store.js';	
+	import { JWT, user, getUserInformation } from '../store.js';	
 	import { goto } from '$app/navigation';
-	import { browser } from '$app/environment';
-	import { get } from 'svelte/store';
+    import { onMount } from 'svelte';
 
-	onMount(() => {
-		console.log("OUI");
-
-		if (browser) {
-			const value = get(JWT);
-			console.log(value);
-		}
+	onMount(async () => {
+		getUserInformation();
 	});
-	/*
-	async function getUserInformation(event) {
-		fetch("http://0.0.0.0:3000/user/information", {
-			method: "GET",
-			headers: {
-				"content-type": "application/json",
-				"authorization": 'Bearer {JWT}'
-			},
-		})
-		.then(function(result){
-			console.log(result);
-			return result.json();
-		})
-		.then(function(data){
-			console.log(data);
-		})
-	}
-	*/
 </script>
 
 <svelte:head>
@@ -38,3 +14,14 @@
 </svelte:head>
 
 <div>This is the dashboard</div>
+<div>This is the token {$JWT}</div>
+
+<hr>
+{#if $user}
+	<div>login: {$user.login}</div>
+	<div>firstname: {$user.first_name}</div>
+	<div>lastname: {$user.last_name}</div>
+	<div>email: {$user.email.email}</div>
+	<div>phone: {$user.phone.phone}</div>
+	<div>status: {$user.user_status.slug}</div>
+{/if}

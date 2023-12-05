@@ -1,3 +1,4 @@
 <footer>
-	<p>This is the footer</p>
+	<hr>
+	<p>This is the footer of the website</p>
 </footer>

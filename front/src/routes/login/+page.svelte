@@ -30,9 +30,9 @@
 			if ("detail" in data) {
 				detail = data["detail"];
 			} else {
-				JWT.set(data['access_token']);
-				
-				goto('/')
+				$JWT = data['access_token'];
+
+				goto('/dashboard')
 			}
 		})
 	}
