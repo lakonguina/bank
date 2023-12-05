@@ -82,5 +82,4 @@
 	{#if detail}
 		<p>{detail}</p>
 	{/if}
-
 </form>

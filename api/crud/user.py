@@ -19,7 +19,7 @@ def get_user_by_login(db: Session, login: str) -> User:
 		.first()
 
 def create_user(db: Session, user: UserCreate) -> User:
-	user_status = get_user_status(db, "waiting-for-email")
+	user_status = get_user_status(db, "waiting-for-validation")
 
 	hashed_password = get_password_hash(user.password)
 
