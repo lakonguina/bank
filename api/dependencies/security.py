@@ -50,15 +50,16 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def create_token(subject: str) -> str:
-    expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+def create_jwt(sub: str, use: str) -> str:
+    exp = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 
-    to_encode = {
-        "exp": expire, 
-        "sub": subject,
+    payload = {
+        "exp": exp, # Expiration
+        "sub": sub, # Subject eg: id_user, id_email
+        "use": use, # Use of this JWT eg: login, reset-password-be-email
     }
 
-    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
+    encoded_jwt = jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 
     return encoded_jwt
 
@@ -67,37 +68,43 @@ def has_access(
     access_token: HTTPAuthorizationCredentials = Depends(http_bearer),
     db: Session = Depends(get_db),
 ) -> User:
-    try:
-        payload = jwt.decode(
-            access_token.credentials,
-            key=settings.SECRET_KEY,
-            algorithms=settings.JWT_ALGORITHM,
-        )
-
-        login: str = payload.get("sub")
-        expire: datetime = payload.get("exp")
-
-    except JWTError:
-        raise credentials_exception
-    
-    user = db.query(User)\
-            .filter(User.login==login)\
-            .first()
-
-    return user
-
-def get_token(token: str):
 	try:
 		payload = jwt.decode(
-			token,
+			access_token.credentials,
 			key=settings.SECRET_KEY,
 			algorithms=settings.JWT_ALGORITHM,
 		)
 
-		subject: Any = payload.get("sub")
-		expire: datetime = payload.get("exp")
+		sub: str = payload.get("sub")
+		use: str = payload.get("use")
+
+		if use != "access":
+			raise HTTPException(
+				status_code=400,
+				detail="Wrong token use"
+			)
+
+	except JWTError as error:
+		raise credentials_exception
+
+	user = db.query(User)\
+		.filter(User.id_user==int(sub))\
+		.first()
+
+	return user
+
+def decode_jwt(jwt_in: str):
+	try:
+		payload = jwt.decode(
+			jwt_in,
+			key=settings.SECRET_KEY,
+			algorithms=settings.JWT_ALGORITHM,
+		)
+
+		sub: str = payload.get("sub")
+		use: str = payload.get("use")
 
 	except JWTError as err:
 		raise credentials_exception
 
-	return subject
+	return int(sub), use

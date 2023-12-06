@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session
 
 from fastapi import (
     APIRouter,
-    BackgroundTasks,
     Depends,
     HTTPException,
     status,
@@ -14,8 +13,8 @@ from api.core.settings import settings
 
 from api.dependencies.security import (
     verify_password,
-    create_token,
-    get_token,
+    create_jwt,
+    decode_jwt,
     has_access,
 	get_password_hash,
 )
@@ -28,10 +27,10 @@ from api.dependencies.email import (
 
 from api.schemas.user import (
     UserCreate,
-    UserLogin,
+    UserLoginByEmail,
     UserOut,
-	UserReset,
-	UserResetPassword,
+	UserEmail,
+	UserPassword,
 )
 
 from api.schemas.token import Token
@@ -39,11 +38,13 @@ from api.schemas.detail import Detail
 
 from api.crud.user import (
 	create_user,
-	get_user_by_login,
+	get_user_by_email,
+	get_user_by_id,
 )
 
 from api.crud.email import (
 	get_email,
+	get_email_by_id,
 	get_email_by_user,
 	create_email,
 )
@@ -60,7 +61,6 @@ router = APIRouter()
 @router.post("/user/register", response_model=Detail)
 def user_register(
     user: UserCreate,
-    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
 ):
 	# Check if phone and email are not used
@@ -68,59 +68,55 @@ def user_register(
 
 	if email:
 		raise HTTPException(
-			status_code=status.HTTP_409_CONFLICT,
-			detail="Email is already registered and active."
+			status_code=409,
+			detail="Email is already registered and active"
 		)
 
 	phone = get_phone(db, user.phone)
 
 	if phone:
 		raise HTTPException(
-			status_code=status.HTTP_409_CONFLICT,
-			detail="Phone is already registered and active."
+			status_code=409,
+			detail="Phone is already registered and active"
 		)
 
 	# Create user
 	db_user = create_user(db, user)
 
 	# Create phone and email
-	create_email(db, db_user.id_user, user.email)
-	create_phone(db, db_user.id_user, user.phone)
+	db_email = create_email(db, db_user.id_user, user.email)
+	db_phone = create_phone(db, db_user.id_user, user.phone)
 
 	# Send email to validate email
-	token = create_token(user.email)
+	token = create_jwt(str(db_email.id_email), "verify-email")
 	url = f"{settings.URI}/user/email/verify/{token}"
 
-	background_tasks.add_task(
-		validate_email,
-		user.email,
-		url,
-	)
+	validate_email(user.email, url)
 
 	# TODO: Send message to validate phone
 
 	return {"detail": "User created check your email for validation"}
 
 
-@router.post("/user/login", response_model=Token)
-def user_login(user: UserLogin, db: Session = Depends(get_db)):
-    db_user = get_user_by_login(db, user.login)
+@router.post("/user/login/email", response_model=Token)
+def user_login_by_email(user: UserLoginByEmail, db: Session = Depends(get_db)):
+    db_user = get_user_by_email(db, user.email)
 
     if not db_user:
         raise HTTPException(
-			status_code=status.HTTP_400_BAD_REQUEST,
-			detail="Wrong login."
+			status_code=400,
+			detail="Wrong email"
 		)
     
     password_is_good = verify_password(user.password, db_user.password)
 
     if not password_is_good:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Wrong password."
+            status_code=400,
+            detail="Wrong password"
         )
      
-    access_token = create_token(db_user.login)
+    access_token = create_jwt(str(db_user.id_user), "access")
     
     return {
         "access_token": access_token,
@@ -130,49 +126,50 @@ def user_login(user: UserLogin, db: Session = Depends(get_db)):
 
 @router.get("/user/email/send/verification-email/", response_model=Detail)
 def user_send_email(
-    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     user = Depends(has_access),
 ):
-	email = get_email_by_user(db, user.id_user)
+	db_email = get_email_by_user(db, user.id_user)
 
-	if email.is_email_active == True:
+	if db_email.is_email_active == True:
 		raise HTTPException(
-			status_code=status.HTTP_400_BAD_REQUEST,
-			detail="Email is already validated."
+			status_code=400,
+			detail="Email is already validated"
 		)
 
-	# Send email to validate email
-	token = create_token(email.email)
-	url = f"{settings.URI}/user/email/verify/{token}"
-	
-	background_tasks.add_task(
-		validate_email,
-		email.email,
-		url,
-	)
+	jwt = create_jwt(str(db_email.id_email), "verify-email")
+	url = f"{settings.URI}/user/email/verify/{jwt}"
+
+	validate_email(db_email.email, url)
 
 	return {"detail": "Email sended"}
 
 
-@router.get("/user/email/verify/{token}", response_model=None)
+@router.get("/user/email/verify/{jwt}", response_model=None)
 def user_verify_email(
-    token: str,
+    jwt: str,
     db: Session = Depends(get_db),
 ):
-	email = get_token(token)
-	db_email = get_email(db, email)
+	id_email, use = decode_jwt(jwt)
+
+	if use != "verify-email":
+		raise HTTPException(
+			status_code=400,
+			detail="Wrong jwt use"
+		)
+		
+	db_email = get_email_by_id(db, id_email)
 
 	if not db_email:
 		raise HTTPException(
-			status_code=status.HTTP_400_BAD_REQUEST,
-			detail="Email not found."
+			status_code=400,
+			detail="Email not found"
 		)
 
 	if db_email.is_email_active:
 		raise HTTPException(
-			status_code=status.HTTP_400_BAD_REQUEST,
-			detail="Email already validated."
+			status_code=400,
+			detail="Email already validated"
 		)
 
 	db_email.is_email_active = True
@@ -182,6 +179,7 @@ def user_verify_email(
 	db.commit()
 
 	return {"detail": "Email validated"}
+
 
 @router.get("/user/information", response_model=UserOut)
 def user_information(
@@ -196,51 +194,40 @@ def user_information(
 
 @router.post("/user/email/send/reset-password", response_model=Detail)
 def user_reset_password_by_email(
-	login: UserReset,	
-    background_tasks: BackgroundTasks,
+	email: UserEmail,
     db: Session = Depends(get_db),
 ):
-	user = get_user_by_login(db, login.login)
-	email = get_email_by_user(db, user.id_user)
+	db_user = get_user_by_email(db, email.email)
 
-	if not user:
+	if not db_user:
 		raise HTTPException(
-			status_code=status.HTTP_400_BAD_REQUEST,
-			detail="Login not found."
+			status_code=400,
+			detail="Email not found"
 		)
 
-	token = create_token(login.login)
-	url = f"{settings.URI}/user/reset-password/{token}"
+	token = create_jwt(str(db_user.id_user), "reset-password")
+	url = f"{settings.URI}/user/email/verify/{token}"
 
-	background_tasks.add_task(
-		reset_password,
-		email.email,
-		url,
-	)
+	validate_email(email.email, url)
 	
 	return {"detail": "Your password reset link as been sent at your email"}
-
-
-@router.post("/user/phone/send/reset-password", response_model=Detail)
-def user_reset_password_by_phone(
-	login: UserReset,	
-):
-	# TODO: Handle reset by password
-
-
-	return {"msg": "Your password reset link as been sent at your phone"}
 
 
 @router.post("/user/reset-password/{token}", response_model=Detail)
 def user_reset_password(
     token: str,
-	password: UserResetPassword,
+	password: UserPassword,
     db: Session = Depends(get_db),
 ):
-	# JWT pass as a string
-	login = get_token(token)
+	id_user, use = decode_jwt(token)
 
-	user = get_user_by_login(db, login)
+	if use != "reset-password":
+		raise HTTPException(
+			status_code=400,
+			detail="Wrong jwt use"
+		)
+
+	user = get_user_by_id(db, id_user)
 
 	hashed_password = get_password_hash(password.password)
 	user.password = hashed_password

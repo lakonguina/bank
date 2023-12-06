@@ -3,7 +3,13 @@ from pathlib import Path
 from emails import Message
 from emails.template import JinjaTemplate
 
+from fastapi import (
+	HTTPException,
+	status,
+)
+
 from api.core.settings import settings
+
 
 def send_email(
 	to: str,
@@ -11,23 +17,30 @@ def send_email(
 	template: str,
 	context: dict[str, str]
 ):
-	message = Message(
-		subject=JinjaTemplate(subject),
-		html=JinjaTemplate(template),
-		mail_from=(settings.MAIL_NAME, settings.MAIL_USER),
-	)
+	try:
+		message = Message(
+			subject=JinjaTemplate(subject),
+			html=JinjaTemplate(template),
+			mail_from=(settings.MAIL_NAME, settings.MAIL_USER),
+		)
 
-	smtp = {
-		"host": settings.MAIL_HOST,
-		"port": settings.MAIL_PORT,
-		"user": settings.MAIL_USER,
-		"password": settings.MAIL_PASSWORD,
-		"tls": settings.MAIL_TLS,
-	}
+		smtp = {
+			"host": settings.MAIL_HOST,
+			"port": settings.MAIL_PORT,
+			"user": settings.MAIL_USER,
+			"password": settings.MAIL_PASSWORD,
+			"tls": settings.MAIL_TLS,
+		}
 
-	response = message.send(to=to, render=context, smtp=smtp)
+		response = message.send(to=to, render=context, smtp=smtp)
 
-	print(response)
+	except Exception as error:
+		print(error)
+
+		raise HTTPException(
+			status_code=500,
+			detail="An error as occured while sending the email",
+		)
 
 
 def validate_email(
@@ -45,6 +58,7 @@ def validate_email(
 		template=template_str,
 		context={"project_name": settings.PROJECT_NAME, "url": url},
 	)
+
 
 def reset_password(
 	to: str,

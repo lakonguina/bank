@@ -23,7 +23,6 @@ CREATE TABLE IF NOT EXISTS users_status (
 CREATE TABLE IF NOT EXISTS users (
 	id_user SERIAL PRIMARY KEY,
 	id_user_status INT NOT NULL,
-	login VARCHAR(64) NOT NULL,
 	password VARCHAR(64) NOT NULL,
 	first_name VARCHAR(64) NOT NULL, 
 	last_name VARCHAR(64) NOT NULL,
