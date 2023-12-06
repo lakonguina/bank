@@ -9,8 +9,8 @@ if (browser) {
     storedJWT = localStorage.getItem("JWT");
 }
 
-export const JWT = writable(storedJWT);
-export const user = writable(null);
+export const JWT = writable(storedJWT || false);
+export const user = writable(false);
 
 // Tie store update to localStorage
 JWT.subscribe(value => {
@@ -20,25 +20,35 @@ JWT.subscribe(value => {
 });
 
 export async function getUserInformation() {
-    const bearer = `Bearer ${get(JWT)}`;
+    if (JWT) {
+        const JWTValue = get(JWT);
 
-    fetch("http://0.0.0.0:3000/user/information", {
-        method: "GET",
-        headers: {
-            "content-type": "application/json",
-            "authorization": bearer,
-        },
-    })
-    .then(function(result){
-        console.log(result);
-        if (result.status === 401) {
-            goto('/')
+        if (JWTValue !== "false") {
+            const bearer = `Bearer ${get(JWT)}`;
+
+            fetch("http://0.0.0.0:3000/user/information", {
+                method: "GET",
+                headers: {
+                    "content-type": "application/json",
+                    "authorization": bearer,
+                },
+            })
+            .then(function(result){
+                if (result.status === 401) {
+                    goto('/login')
+                }
+
+                return result.json();
+            })
+            .then(function(data){
+                user.set(data);
+            })
+
+        } else {
+            goto('/login')
         }
 
-        return result.json();
-    })
-    .then(function(data){
-        console.log(data);
-        user.set(data);
-    })
+    } else {
+        goto('/login')
+    }
 }
