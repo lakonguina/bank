@@ -1,37 +1,13 @@
-from datetime import (
-    datetime,
-    timedelta,
-)
+from datetime import datetime, timedelta
 
-from typing import (
-    Any,
-    Union,
-)
-
-from sqlalchemy.orm import Session
-
-from jose import (
-    jwt,
-    JWTError,
-)
+from jose import jwt, JWTError
 
 from passlib.context import CryptContext
 
-from fastapi import (
-    Depends,
-    HTTPException,
-    status,
-)
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from fastapi.security import (
-    HTTPAuthorizationCredentials,
-    HTTPBearer,
-)
-
-from api.dependencies.session import get_db
 from api.core.settings import settings
-from api.models.user import User
-
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 http_bearer =  HTTPBearer()
@@ -41,6 +17,10 @@ credentials_exception = HTTPException(
 	detail="Could not validate credentials",
 	headers={"WWW-Authenticate": "Bearer"},
 )
+
+class JWTSlug:
+	access = "access"
+	verify_email = "verify_email"
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
@@ -64,36 +44,7 @@ def create_jwt(sub: str, use: str) -> str:
     return encoded_jwt
 
 
-def has_access(
-    access_token: HTTPAuthorizationCredentials = Depends(http_bearer),
-    db: Session = Depends(get_db),
-) -> User:
-	try:
-		payload = jwt.decode(
-			access_token.credentials,
-			key=settings.SECRET_KEY,
-			algorithms=settings.JWT_ALGORITHM,
-		)
-
-		sub: str = payload.get("sub")
-		use: str = payload.get("use")
-
-		if use != "access":
-			raise HTTPException(
-				status_code=400,
-				detail="Wrong token use"
-			)
-
-	except JWTError as error:
-		raise credentials_exception
-
-	user = db.query(User)\
-		.filter(User.id_user==int(sub))\
-		.first()
-
-	return user
-
-def decode_jwt(jwt_in: str):
+def decode_jwt(jwt_in: str, use_in: str) -> int:
 	try:
 		payload = jwt.decode(
 			jwt_in,
@@ -106,5 +57,17 @@ def decode_jwt(jwt_in: str):
 
 	except JWTError as err:
 		raise credentials_exception
+	
+	if use_in != use:
+		raise HTTPException(
+			status_code=409,
+			detail=f"Wrong jwt use should be {use_in} instead of {use}"
+		)
 
-	return int(sub), use
+	return int(sub)
+
+
+def has_access(jwt_in: HTTPAuthorizationCredentials = Depends(http_bearer)) -> int:
+	sub: int = decode_jwt(jwt_in.credentials, JWTSlug.access)
+
+	return sub

@@ -1,36 +1,30 @@
 from pydantic import EmailStr
 
-from sqlalchemy.orm import Session
+from sqlmodel import Session, select
 
-from api.models.user import UserStatus
-from api.models.user import User
-
-from api.schemas.user import UserCreate
-
-from api.dependencies.security import get_password_hash
+from api.schemas.user import User, UserCreate, UserStatus
+from api.schemas.email import Email
+from api.schemas.phone import Phone
 
 from api.crud.email import get_email
 
+from api.dependencies.security import get_password_hash
 
-def get_user_status(db: Session, slug: str) -> UserStatus | None:
-	return db.query(UserStatus)\
-		.filter(UserStatus.slug == slug)\
-		.first()
 
-def get_user_by_email(db: Session, email: EmailStr) -> User:
-	email = get_email(db, email)
-	
-	return db.query(User)\
-		.filter(User.id_user == email.id_user)\
-		.first()
+def get_user_status(session: Session, slug: str) -> UserStatus | None:
+	return session.exec(select(UserStatus).where(UserStatus.slug == slug)).one()
 
-def get_user_by_id(db: Session, id_user: int) -> User:
-	return db.query(User)\
-		.filter(User.id_user == id_user)\
-		.first()
+def get_user_by_id(session: Session, id_user: int) -> User:
+	return session.get(User, id_user)
 
-def create_user(db: Session, user: UserCreate) -> User:
-	user_status = get_user_status(db, "waiting-for-validation")
+def get_user_by_email(session: Session, email: EmailStr) -> User:
+	db_email = get_email(session, email)
+	db_user = get_user_by_id(session, db_email.id_user)	
+
+	return db_user
+
+def create_user(session: Session, user: UserCreate) -> User:
+	status = get_user_status(session, "waiting-for-validation")
 
 	hashed_password = get_password_hash(user.password)
 
@@ -38,11 +32,25 @@ def create_user(db: Session, user: UserCreate) -> User:
 		password=hashed_password,
 		first_name=user.first_name,
 		last_name=user.last_name,
-		id_user_status=user_status.id_user_status,
+		status=status,
 	)
 	
-	db.add(db_user)
-	db.commit()
-	db.refresh(db_user)
+	db_email = Email(
+		user=db_user,
+		email=user.email,
+	)
+
+	db_phone = Phone(
+		user=db_user,
+		phone=user.phone,
+	)
 	
-	return db_user
+	session.add(db_user)
+	session.add(db_email)
+	session.add(db_phone)
+
+	session.commit()
+	
+	session.refresh(db_email)
+	
+	return db_email

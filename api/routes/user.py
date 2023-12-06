@@ -1,70 +1,35 @@
 from datetime import datetime
 
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, HTTPException
 
-from fastapi import (
-    APIRouter,
-    Depends,
-    HTTPException,
-    status,
-)
+from sqlmodel import Session
 
+from api.core.database import engine, get_session
 from api.core.settings import settings
 
-from api.dependencies.security import (
-    verify_password,
-    create_jwt,
-    decode_jwt,
-    has_access,
-	get_password_hash,
-)
+from api.dependencies.security import verify_password, create_jwt, decode_jwt, has_access, get_password_hash, JWTSlug
 
-from api.dependencies.session import get_db
-from api.dependencies.email import (
-	validate_email,
-	reset_password,
-)
+from api.dependencies.email import validate_email
 
-from api.schemas.user import (
-    UserCreate,
-    UserLoginByEmail,
-    UserOut,
-	UserEmail,
-	UserPassword,
-)
-
-from api.schemas.token import Token
 from api.schemas.detail import Detail
+from api.schemas.user import User, UserCreate, UserInformation, UserLoginByEmail, UserStatus
+from api.schemas.token import Token
+from api.schemas.email import Email
 
-from api.crud.user import (
-	create_user,
-	get_user_by_email,
-	get_user_by_id,
-)
-
-from api.crud.email import (
-	get_email,
-	get_email_by_id,
-	get_email_by_user,
-	create_email,
-)
-
-from api.crud.phone import (
-	get_phone,
-	get_phone_by_user,
-	create_phone,
-)
+from api.crud.email import get_email, get_email_by_id, get_email_by_user
+from api.crud.phone import get_phone, get_phone_by_user
+from api.crud.user import create_user, get_user_by_email, get_user_by_id
 
 
 router = APIRouter()
 
 @router.post("/user/register", response_model=Detail)
 def user_register(
-    user: UserCreate,
-    db: Session = Depends(get_db)
+	user: UserCreate,
+	session: Session = Depends(get_session),
 ):
 	# Check if phone and email are not used
-	email = get_email(db, user.email)
+	email = get_email(session, user.email)
 
 	if email:
 		raise HTTPException(
@@ -72,7 +37,7 @@ def user_register(
 			detail="Email is already registered and active"
 		)
 
-	phone = get_phone(db, user.phone)
+	phone = get_phone(session, user.phone)
 
 	if phone:
 		raise HTTPException(
@@ -80,15 +45,15 @@ def user_register(
 			detail="Phone is already registered and active"
 		)
 
-	# Create user
-	db_user = create_user(db, user)
-
-	# Create phone and email
-	db_email = create_email(db, db_user.id_user, user.email)
-	db_phone = create_phone(db, db_user.id_user, user.phone)
+	# Create user
+	db_email = create_user(session, user)
 
 	# Send email to validate email
-	token = create_jwt(str(db_email.id_email), "verify-email")
+	token = create_jwt(
+		str(db_email.id_email),
+		JWTSlug.verify_email,
+	)
+
 	url = f"{settings.URI}/user/email/verify/{token}"
 
 	validate_email(user.email, url)
@@ -99,37 +64,43 @@ def user_register(
 
 
 @router.post("/user/login/email", response_model=Token)
-def user_login_by_email(user: UserLoginByEmail, db: Session = Depends(get_db)):
-    db_user = get_user_by_email(db, user.email)
+def user_login_by_email(
+	user: UserLoginByEmail,
+	session: Session = Depends(get_session),
+):
+	db_user = get_user_by_email(session, user.email)
 
-    if not db_user:
-        raise HTTPException(
+	if not db_user:
+		raise HTTPException(
 			status_code=400,
 			detail="Wrong email"
 		)
-    
-    password_is_good = verify_password(user.password, db_user.password)
 
-    if not password_is_good:
-        raise HTTPException(
-            status_code=400,
-            detail="Wrong password"
-        )
-     
-    access_token = create_jwt(str(db_user.id_user), "access")
-    
-    return {
-        "access_token": access_token,
-        "token_type": "bearer"
-    }
+	password_is_good = verify_password(user.password, db_user.password)
+
+	if not password_is_good:
+		raise HTTPException(
+			status_code=400,
+			detail="Wrong password"
+		)
+
+	access_token = create_jwt(
+		str(db_user.id_user),
+		JWTSlug.access,
+	)
+
+	return {
+		"access_token": access_token,
+		"token_type": "bearer"
+	}
 
 
 @router.get("/user/email/send/verification-email/", response_model=Detail)
 def user_send_email(
-    db: Session = Depends(get_db),
-    user = Depends(has_access),
+	session: Session = Depends(get_session),
+    id_user: int = Depends(has_access),
 ):
-	db_email = get_email_by_user(db, user.id_user)
+	db_email = get_email_by_user(session, id_user)
 
 	if db_email.is_email_active == True:
 		raise HTTPException(
@@ -137,7 +108,11 @@ def user_send_email(
 			detail="Email is already validated"
 		)
 
-	jwt = create_jwt(str(db_email.id_email), "verify-email")
+	jwt = create_jwt(
+		str(db_email.id_email),
+		JWTSlug.verify_email,
+	)
+
 	url = f"{settings.URI}/user/email/verify/{jwt}"
 
 	validate_email(db_email.email, url)
@@ -148,17 +123,10 @@ def user_send_email(
 @router.get("/user/email/verify/{jwt}", response_model=None)
 def user_verify_email(
     jwt: str,
-    db: Session = Depends(get_db),
+	session: Session = Depends(get_session),
 ):
-	id_email, use = decode_jwt(jwt)
-
-	if use != "verify-email":
-		raise HTTPException(
-			status_code=400,
-			detail="Wrong jwt use"
-		)
-		
-	db_email = get_email_by_id(db, id_email)
+	id_email: int = decode_jwt(jwt, JWTSlug.verify_email)
+	db_email = get_email_by_id(session, id_email)
 
 	if not db_email:
 		raise HTTPException(
@@ -175,23 +143,22 @@ def user_verify_email(
 	db_email.is_email_active = True
 	db_email.date_validation = datetime.now()
 
-	db.add(db_email)
-	db.commit()
+	session.add(db_email)
+	session.commit()
 
 	return {"detail": "Email validated"}
 
 
-@router.get("/user/information", response_model=UserOut)
+@router.get("/user/information", response_model=UserInformation)
 def user_information(
-    db: Session = Depends(get_db),
-    user = Depends(has_access),
+	session: Session = Depends(get_session),
+    id_user: int = Depends(has_access),
 ):
-	user.email = get_email_by_user(db, user.id_user)
-	user.phone = get_phone_by_user(db, user.id_user)
-	
-	return user
+	db_user = get_user_by_id(session, id_user)
 
+	return db_user
 
+"""
 @router.post("/user/email/send/reset-password", response_model=Detail)
 def user_reset_password_by_email(
 	email: UserEmail,
@@ -236,3 +203,4 @@ def user_reset_password(
 	db.commit()
 
 	return {"detail": "Password updated"}
+"""

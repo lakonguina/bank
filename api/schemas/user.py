@@ -1,47 +1,50 @@
+from typing import List, Optional
 from datetime import datetime
 
-from pydantic import (
-	BaseModel,
-	EmailStr,
-	Field
-)
+from sqlmodel import Field, Relationship, SQLModel
 
-from api.schemas.email import EmailOut
-from api.schemas.phone import PhoneOut
+from api.schemas.email import Email, EmailField, EmailOut
+from api.schemas.phone import Phone, PhoneField, PhoneOut
 
 
-class UserStatus(BaseModel):
-    slug: str
-    
-    class Config:
-        orm_mode = True
+class UserStatusOut(SQLModel):
+	slug: str = Field(max_length=64)
 
 
-class UserEmail(BaseModel):
-    email: EmailStr = Field(title="Email of the user")
+class UserStatus(UserStatusOut, table=True):
+	__tablename__ = "users_status"
+	id_user_status: int = Field(primary_key=True)
+	user: List["User"] = Relationship(back_populates="status")
 
 
-class UserPassword(BaseModel):
-    password: str = Field(title="Password of the user", max_length=64)
+class UserPasswordField(SQLModel):
+	password: str = Field(max_length=64)
 
 
-class UserLoginByEmail(UserEmail, UserPassword):
+class UserBase(SQLModel):
+    first_name: str = Field(max_length=64)
+    last_name: str = Field(max_length=64)
+
+
+class User(UserBase, UserPasswordField, table=True):
+	__tablename__ = "users"
+	id_user: Optional[int] = Field(primary_key=True)
+	id_user_status: int = Field(foreign_key="users_status.id_user_status")
+
+	status: UserStatus = Relationship(back_populates="user")
+	email: Email = Relationship(back_populates="user", sa_relationship_kwargs={'uselist': False})
+	phone: Phone = Relationship(back_populates="user", sa_relationship_kwargs={'uselist': False})
+
+
+class UserCreate(UserBase, UserPasswordField, EmailField, PhoneField):
 	pass
 
 
-class UserCreate(UserLoginByEmail):
-    first_name: str = Field(title="Only the first first name of the user", max_length=64)
-    last_name: str = Field(title="Last name of the user", max_length=64)
-    phone: str = Field(title="Phone number of the user", max_length=16)
+class UserLoginByEmail(EmailField, UserPasswordField):
+	pass
 
 
-class UserOut(BaseModel):
-    first_name: str
-    last_name: str
-    date_insert: datetime
-    email: EmailOut
-    phone: PhoneOut
-    user_status: UserStatus
-
-    class Config:
-        orm_mode = True
+class UserInformation(UserBase):
+	status: UserStatusOut
+	email: EmailOut
+	phone: PhoneOut
