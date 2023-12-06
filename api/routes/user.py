@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from pydantic import EmailStr
+
 from fastapi import APIRouter, Depends, HTTPException
 
 from sqlmodel import Session
@@ -9,12 +11,12 @@ from api.core.settings import settings
 
 from api.dependencies.security import verify_password, create_jwt, decode_jwt, has_access, get_password_hash, JWTSlug
 
-from api.dependencies.email import validate_email
+from api.dependencies.email import validate_email, reset_password
 
 from api.schemas.detail import Detail
-from api.schemas.user import User, UserCreate, UserInformation, UserLoginByEmail, UserStatus
+from api.schemas.user import User, UserCreate, UserInformation, UserLoginByEmail, UserPasswordField, UserStatus
 from api.schemas.token import Token
-from api.schemas.email import Email
+from api.schemas.email import Email, EmailField
 
 from api.crud.email import get_email, get_email_by_id, get_email_by_user
 from api.crud.phone import get_phone, get_phone_by_user
@@ -158,13 +160,12 @@ def user_information(
 
 	return db_user
 
-"""
 @router.post("/user/email/send/reset-password", response_model=Detail)
 def user_reset_password_by_email(
-	email: UserEmail,
-    db: Session = Depends(get_db),
+	email: EmailField,
+	session: Session = Depends(get_session),
 ):
-	db_user = get_user_by_email(db, email.email)
+	db_user = get_user_by_email(session, email.email)
 
 	if not db_user:
 		raise HTTPException(
@@ -172,35 +173,32 @@ def user_reset_password_by_email(
 			detail="Email not found"
 		)
 
-	token = create_jwt(str(db_user.id_user), "reset-password")
-	url = f"{settings.URI}/user/email/verify/{token}"
+	token: str = create_jwt(
+		str(db_user.id_user),
+		JWTSlug.reset_password,
+	)
 
-	validate_email(email.email, url)
+	url = f"{settings.URI}/user/reset-password/{token}"
+
+	reset_password(email.email, url)
 	
 	return {"detail": "Your password reset link as been sent at your email"}
 
 
-@router.post("/user/reset-password/{token}", response_model=Detail)
+@router.post("/user/reset-password/{jwt}", response_model=Detail)
 def user_reset_password(
-    token: str,
-	password: UserPassword,
-    db: Session = Depends(get_db),
+    jwt: str,
+	password: UserPasswordField,
+	session: Session = Depends(get_session),
 ):
-	id_user, use = decode_jwt(token)
+	id_user: int  = decode_jwt(jwt, JWTSlug.reset_password)
 
-	if use != "reset-password":
-		raise HTTPException(
-			status_code=400,
-			detail="Wrong jwt use"
-		)
-
-	user = get_user_by_id(db, id_user)
+	db_user = get_user_by_id(session, id_user)
 
 	hashed_password = get_password_hash(password.password)
-	user.password = hashed_password
+	db_user.password = hashed_password
 
-	db.add(user)
-	db.commit()
+	session.add(db_user)
+	session.commit()
 
 	return {"detail": "Password updated"}
-"""
