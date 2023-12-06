@@ -23,7 +23,7 @@ from api.crud.phone import get_phone, get_phone_by_user
 from api.crud.user import create_user, get_user_by_email, get_user_by_id
 
 
-router = APIRouter()
+router = APIRouter(tags=["Users"])
 
 @router.post("/user/register", response_model=Detail)
 def user_register(

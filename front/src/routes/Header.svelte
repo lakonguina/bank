@@ -6,8 +6,8 @@
 	import logo from '$lib/images/svelte-logo.svg';
 
 	async function disconnect() {
-		$JWT = false;
-		$user = false;
+		$JWT = "false";
+		$user = null;
 		goto('/login')
 	}
 </script>
@@ -19,7 +19,7 @@
 				<img alt="The project logo" src={logo} />
 			</a>
 
-			{#if !$JWT || $JWT === false}
+			{#if !$JWT || $JWT === "false"}
 				<li aria-current={$page.url.pathname === '/login' ? 'page' : undefined}>
 					<a href="/login">Login</a>
 				</li>

@@ -17,6 +17,7 @@ api = FastAPI(
         "name": "Apache 2.0",
         "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
     },
+	redoc_url=None,
 )
 
 api.add_middleware(
@@ -27,4 +28,4 @@ api.add_middleware(
     allow_headers=["*"],
 )
 
-api.include_router(user.router, tags=["Users"])
+api.include_router(user.router)

@@ -5,6 +5,8 @@
 	onMount(() => {
 		getUserInformation();
 	});
+	
+	console.log($user);
 </script>
 
 <svelte:head>
@@ -14,8 +16,8 @@
 
 <hr>
 {#if $user}
-	{#if $user.user_status.slug == "waiting-for-validation" || $user.email.is_email_active == false}
-		{#if $user.user_status.slug == "waiting-for-validation" }
+	{#if $user.status.slug == "waiting-for-validation" || $user.email.is_email_active == false}
+		{#if $user.status.slug == "waiting-for-validation" }
 			<p>Votre compte est en cours de validation.</p>
 		{/if}
 

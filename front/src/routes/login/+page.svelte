@@ -9,15 +9,15 @@
 
 		const data = new FormData(event.target)
 
-		const login = data.get('login');
+		const email = data.get('email');
 		const password = data.get('password');
 
 		var payload = {
-			login: login,
+			email: email,
 			password: password,
 		};
 
-		fetch("http://0.0.0.0:3000/user/login", {
+		fetch("http://0.0.0.0:3000/user/login/email", {
 			method: "POST",
 			headers: {"content-type": "application/json"},
 			body: JSON.stringify(payload)
@@ -27,6 +27,7 @@
 			return result.json();
 		})
 		.then(function(data){
+			console.log(data);
 			if ("detail" in data) {
 				detail = data["detail"];
 			} else {
@@ -45,8 +46,8 @@
 
 <form on:submit|preventDefault={login}>
 	<div>
-		<label for="login">Login</label>
-    	<input type="text" name="login" required>
+		<label for="email">Email</label>
+    	<input type="email" name="email" required>
 	</div>
 
 	<div>

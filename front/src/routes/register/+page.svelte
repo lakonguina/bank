@@ -6,7 +6,6 @@
 
 		const data = new FormData(event.target)
 
-		const login = data.get('login');
 		const firstname = data.get('firstname');
 		const lastname = data.get('lastname');
 		const email = data.get('email');
@@ -19,13 +18,11 @@
 		}
 
 		var payload = {
-			login: login,
 			first_name: firstname,
 			last_name: lastname,
 			email: email,
 			phone: phone,
 			password: password,
-			passwordConfirm: passwordConfirm
 		};
 
 		fetch("http://0.0.0.0:3000/user/register", {
@@ -48,10 +45,6 @@
 </svelte:head>
 
 <form on:submit|preventDefault={register}>
-	<div>
-		<label for="login">Login<label>
-    	<input type="text" name="login" required>
-	</div>
 	<div>
 		<label for="firstname">First name<label>
     	<input type="text" name="firstname" required>

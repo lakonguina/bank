@@ -1,7 +1,10 @@
 <script>
-	import { user } from '../store.js';	
+	import { user, getUserInformation } from '../store.js';	
+    import { onMount } from 'svelte';
 
-	console.log($user);
+	onMount(() => {
+		getUserInformation();
+	});
 </script>
 
 <svelte:head>
@@ -10,7 +13,6 @@
 </svelte:head>
 
 {#if $user}
-	<div>Login: {$user.login}</div>
 	<div>Firstname: {$user.first_name}</div>
 	<div>Lastname: {$user.last_name}</div>
 	<div>

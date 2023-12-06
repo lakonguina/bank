@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import EmailStr
 
 from sqlmodel import Session, select
@@ -19,7 +21,10 @@ def get_user_by_id(session: Session, id_user: int) -> User:
 
 def get_user_by_email(session: Session, email: EmailStr) -> User:
 	db_email = get_email(session, email)
-	db_user = get_user_by_id(session, db_email.id_user)	
+	db_user: Optional[User] = None
+
+	if db_email:
+		db_user = get_user_by_id(session, db_email.id_user)	
 
 	return db_user
 

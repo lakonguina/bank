@@ -9,8 +9,8 @@ if (browser) {
     storedJWT = localStorage.getItem("JWT");
 }
 
-export const JWT = writable(storedJWT || false);
-export const user = writable(false);
+export const JWT = writable(storedJWT || "false");
+export const user = writable(null);
 
 // Tie store update to localStorage
 JWT.subscribe(value => {
@@ -34,6 +34,7 @@ export async function getUserInformation() {
                 },
             })
             .then(function(result){
+                console.log(result);
                 if (result.status === 401) {
                     goto('/login')
                 }
