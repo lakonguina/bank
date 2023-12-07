@@ -2,6 +2,7 @@ CREATE DATABASE frontoffice;
 
 \c frontoffice
 
+/*
 CREATE TABLE IF NOT EXISTS countries (
 	id_country SERIAL PRIMARY KEY,
 	alpha2 CHAR(2) NOT NULL,
@@ -13,6 +14,7 @@ CREATE TABLE IF NOT EXISTS countries (
 	residence BOOLEAN DEFAULT FALSE,
 	date_insert TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+*/
 
 CREATE TABLE IF NOT EXISTS users_status (
 	id_user_status SERIAL PRIMARY KEY,
@@ -30,6 +32,7 @@ CREATE TABLE IF NOT EXISTS users (
 	CONSTRAINT fk_user_status FOREIGN KEY(id_user_status) REFERENCES users_status(id_user_status)
 );
 
+/*
 CREATE TABLE IF NOT EXISTS addresses (
 	id_address SERIAL PRIMARY KEY,
 	id_country INT NOT NULL,
@@ -38,6 +41,7 @@ CREATE TABLE IF NOT EXISTS addresses (
 	zip_code VARCHAR(64),
 	CONSTRAINT fk_country FOREIGN KEY(id_country) REFERENCES countries(id_country)
 );
+*/
 
 CREATE TABLE IF NOT EXISTS phones (
 	id_phone SERIAL PRIMARY KEY,
@@ -60,3 +64,20 @@ CREATE TABLE IF NOT EXISTS emails (
 	date_insert TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT fk_user FOREIGN KEY(id_user) REFERENCES users(id_user)
 );
+
+/*
+CREATE TABLE IF NOT EXISTS documents_type (
+	id_document_type SERIAL PRIMARY KEY,
+	slug VARCHAR(32) NOT NULL,
+);
+
+CREATE TABLE IF NOT EXISTS documents (
+	id_document SERIAL PRIMARY KEY,
+	id_user INT NOT NULL,
+	id_document_type VARCHAR(320) NOT NULL,
+	is_valid BOOLEAN NOT NULL DEFAULT FALSE,
+	date_insert TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT fk_user KEY(id_user) REFERENCES users(id_user),
+	CONSTRAINT fk_document_type KEY(id_document_type) REFERENCES documents_type(id_document_type)
+);
+*/

@@ -26,6 +26,19 @@ services:
     volumes:
       - ./api:/app/api
 
+  backoffice:
+    build:
+      context: ./backoffice
+      dockerfile: ./Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    volumes:
+      - ./backoffice:/app/backoffice
+
   smtp4dev:
     image: rnwood/smtp4dev:v3
     restart: always
