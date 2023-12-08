@@ -44,20 +44,44 @@
 	<meta name="description" content="Login" />
 </svelte:head>
 
-<form on:submit|preventDefault={login}>
-	<div>
-		<label for="email">Email</label>
-    	<input type="email" name="email" required>
-	</div>
+<div class="flex justify-center">
+	<form 
+		class="bg-white border border-inherit w-full md:w-4/12 py-6 px-6 mt-32 mx-2"
+		on:submit|preventDefault={login}
+	>
+		<div>
+			<div class="text-base font-bold">Email</div>
+			<input
+				class="border border-inherit w-full my-2 py-1 px-1"
+				type="email"
+				name="email"
+				required
+			>
+		</div>
 
-	<div>
-    	<label for="password">Password</label>
-    	<input type="password" name="password" required>
-	</div>
+		<div>
+			<div class="text-base font-bold">Mot de passe</div>
+			<input
+				class="border border-inherit w-full my-2 py-1 px-1"
+				type="password"
+				name="password"
+				required
+			>
+		</div>
 
-	<button type="submit">Login</button>
+		<button 
+			class="bg-blue-500 hover:bg-blue-700 text-white py-2 mt-2 w-full"
+			type="submit"
+		>
+			Se connecter
+		</button>
 
-	{#if detail}
-		<p>{detail}</p>
-	{/if}
-</form>
+		{#if detail}
+			<div 
+				class="bg-blue-100 mt-2 px-2 py-2 font-bold"
+			>
+				{detail}
+			</div>
+		{/if}
+	</form>
+</div>

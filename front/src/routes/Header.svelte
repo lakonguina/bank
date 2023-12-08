@@ -13,33 +13,30 @@
 </script>
 
 <header>
-	<nav>
-		<ul>
-			<a href="/">
-				<img alt="The project logo" src={logo} />
+	<div class="flex justify-between items-center mx-auto max-w-screen-xl py-4">
+		<a href="/" class="flex">
+			<img src={logo} class="mr-3 h-6 sm:h-9" alt="Logo" />
+			<span class="self-center text-xl font-semibold dark:text-white">Bank</span>
+		</a>
+		<div class="flex items-center">
+			<a href="/" class="mr-2">
+				Marchés
 			</a>
-
 			{#if !$JWT || $JWT === "false"}
-				<li aria-current={$page.url.pathname === '/login' ? 'page' : undefined}>
-					<a href="/login">Login</a>
-				</li>
-				<li aria-current={$page.url.pathname === '/register' ? 'page' : undefined}>
-					<a href="/register">Register</a>
-				</li>
+				<a href="/login" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 mr-2">
+					Se connecter
+				</a>
+				<a href="/register" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4">
+					Ouvrir un compte
+				</a>
 			{:else}
-				<li aria-current={$page.url.pathname === '/dashboard' ? 'page' : undefined}>
-					<a href="/dashboard">Dashboard</a>
-				</li>
-				<li aria-current={$page.url.pathname === '/information' ? 'page' : undefined}>
-					<a href="/information">Information</a>
-				</li>
-				<li>
-					<button on:click={disconnect}>Disconnect</button>
-				</li>
+				<a href="/dashboard" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 mr-2">
+					Accéder à l'application
+				</a>
+				<button class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4">
+					Mon compte
+				</button>
 			{/if}
-		</ul>
-	</nav>
+		</div>	
+	</div>
 </header>
-
-<style>
-</style>
