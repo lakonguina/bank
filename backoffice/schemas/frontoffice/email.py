@@ -23,4 +23,4 @@ class Email(EmailOut, table=True):
 	is_active: bool = Field(default=True)
 	date_validation: Optional[datetime]
 
-	user: Optional["User"] = Relationship(back_populates="email")
+	user: Optional["UserFrontoffice"] = Relationship(back_populates="email")

@@ -1,0 +1,52 @@
+{% extends "core/base.html" %}
+
+{% block main %}
+	<table class="table table-bordered">
+		<thead>
+			</tr>
+				<th>Id</th>
+				<th>Firstname</th>
+				<th>Lastname</th>
+				<th>Email</th>
+				<th>Phone</th>
+				<th>Status</th>
+				<th>Date insert</th>
+				<th>Action</th>
+			<tr>
+		</thead>
+		<tbody>
+			{% for user in users %}
+			<tr>
+				<td>{{ user.id_user }}</td>
+				<td>{{ user.first_name }}</td>
+				<td>{{ user.last_name }}</td>
+				<td>
+					{{ user.email.email }}
+
+					{% if user.email.is_email_active %}
+						✅							
+					{% else %}
+						❌
+					{% endif %}
+				</td>
+				<td>
+					{{ user.phone.phone }}
+
+					{% if user.phone.is_phone_active %}
+						✅							
+					{% else %}
+						❌
+					{% endif %}
+				</td>
+				<td>{{ user.status.slug }}</td>
+				<td>{{ user.date_insert }}</td>
+				<td>
+					<a href="/user/{{ user.id_user }}">
+						Voir
+					</a>	
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock main %}

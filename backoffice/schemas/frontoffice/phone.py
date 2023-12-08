@@ -21,4 +21,4 @@ class Phone(PhoneField, table=True):
 	is_active: bool = Field(default=True)
 	date_validation: Optional[datetime]
 
-	user: "User" = Relationship(back_populates="phone")
+	user: "UserFrontoffice" = Relationship(back_populates="phone")

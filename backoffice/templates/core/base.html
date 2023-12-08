@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="{{ url_for('static', path='/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+	</head>
+	<body>
+		<main class="container">
+			{% if request.state.user %}
+				<p>
+					Connecté: {{ request.state.user.id_user_internal }}#{{ request.state.user.email }} - {{ request.state.user.first_name }} {{ request.state.user.last_name }}
+				</p>
+				<ul>
+					<li>
+						<a href="/signout">
+							Signout
+						<a/>
+					</li>
+					<li>
+						<a href="/user/list">
+							Users
+						<a/>
+					</li>
+				</ul>
+			{% endif %}
+
+			{% block main %}
+			{% endblock main %}
+		</main>
+	</body>
+</html>

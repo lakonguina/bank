@@ -3,8 +3,8 @@ from datetime import datetime
 
 from sqlmodel import Field, Relationship, SQLModel
 
-from backoffice.schemas.email import Email, EmailField, EmailOut
-from backoffice.schemas.phone import Phone, PhoneField, PhoneOut
+from backoffice.schemas.frontoffice.email import Email, EmailField, EmailOut
+from backoffice.schemas.frontoffice.phone import Phone, PhoneField, PhoneOut
 
 
 class UserStatusOut(SQLModel):
@@ -14,7 +14,7 @@ class UserStatusOut(SQLModel):
 class UserStatus(UserStatusOut, table=True):
 	__tablename__ = "users_status"
 	id_user_status: int = Field(primary_key=True)
-	user: List["User"] = Relationship(back_populates="status")
+	user: List["UserFrontoffice"] = Relationship(back_populates="status")
 
 
 class UserPasswordField(SQLModel):
@@ -26,16 +26,28 @@ class UserBase(SQLModel):
     last_name: str = Field(max_length=64)
 
 
-class User(UserBase, UserPasswordField, table=True):
+class UserFrontoffice(UserBase, UserPasswordField, table=True):
 	__tablename__ = "users"
 	id_user: Optional[int] = Field(primary_key=True)
 	id_user_status: int = Field(foreign_key="users_status.id_user_status")
 
 	status: UserStatus = Relationship(back_populates="user")
-	email: Email = Relationship(back_populates="user", sa_relationship_kwargs={'uselist': False})
-	phone: Phone = Relationship(back_populates="user", sa_relationship_kwargs={'uselist': False})
 
+	email: Email = Relationship(
+		back_populates="user",
+        sa_relationship_kwargs={
+            "primaryjoin": "and_(Email.id_user==UserFrontoffice.id_user, Email.is_active==True)",
+			"uselist": False,
+			"viewonly": True,
+		}
+	)
 
+	emails: List[Email] = Relationship(back_populates="user")
+
+	phone: List[Phone] = Relationship(back_populates="user")
+
+	date_insert: datetime
+	
 class UserCreate(UserBase, UserPasswordField, EmailField, PhoneField):
 	pass
 

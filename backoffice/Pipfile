@@ -15,6 +15,7 @@ emails = "*"
 jinja2 = "*"
 sqlmodel = "*"
 python-multipart = "*"
+fastapi-login = "*"
 
 [dev-packages]
 pytest = "*"

@@ -1,7 +1,11 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Request
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
 from backoffice.routes import user
+from backoffice.routes import auth
+from backoffice.core.manager import manager, NotAuthenticatedException
+
 
 api = FastAPI(
     title="Bank",
@@ -20,12 +24,16 @@ api = FastAPI(
 	redoc_url=None,
 )
 
-api.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 api.include_router(user.router)
+api.include_router(auth.router)
+
+api.mount("/static", StaticFiles(directory="backoffice/static"), name="static")
+
+@api.exception_handler(NotAuthenticatedException)
+def auth_exception_handler(request: Request, exc: NotAuthenticatedException):
+    """
+    Redirect the user to the login page if not logged in
+    """
+    return RedirectResponse(url='/')
+
+manager.useRequest(api)

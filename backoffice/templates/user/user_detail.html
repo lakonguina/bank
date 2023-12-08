@@ -1,0 +1,25 @@
+{% extends "core/base.html" %}
+
+{% block main %}
+
+<h3>Information</h3>
+
+<div class="card">
+  	<div class="card-body">
+		<div>Id: {{ user.id_user }}</div>
+		<div>Firstname: {{ user.first_name }}</div>
+		<div>Lastname: {{ user.last_name }}</div>
+		<div>Status: {{ user.status.slug }}</div>
+  	</div>
+</div>
+
+<br>
+<h3>Emails</h3>
+{% for email in user.emails %}
+	{{ email }}
+{% endfor %}
+
+<br>
+<h3>Phones</h3>
+
+{% endblock main %}
