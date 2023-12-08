@@ -32,8 +32,23 @@ class User(UserBase, UserPasswordField, table=True):
 	id_user_status: int = Field(foreign_key="users_status.id_user_status")
 
 	status: UserStatus = Relationship(back_populates="user")
-	email: Email = Relationship(back_populates="user", sa_relationship_kwargs={'uselist': False})
-	phone: Phone = Relationship(back_populates="user", sa_relationship_kwargs={'uselist': False})
+	email: Email = Relationship(
+		back_populates="user",
+		sa_relationship_kwargs={
+			"primaryjoin": "and_(Email.id_user==User.id_user, Email.is_active==True)",
+			"uselist": False,
+			"viewonly": True,
+		}
+	)
+
+	phone: Phone = Relationship(
+		back_populates="user",
+		sa_relationship_kwargs={
+			"primaryjoin": "and_(Phone.id_user==User.id_user, Phone.is_active==True)",
+			"uselist": False,
+			"viewonly": True,
+		}
+	)
 
 
 class UserCreate(UserBase, UserPasswordField, EmailField, PhoneField):
