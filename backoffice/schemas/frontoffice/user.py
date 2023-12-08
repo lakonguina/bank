@@ -42,9 +42,14 @@ class UserFrontoffice(UserBase, UserPasswordField, table=True):
 		}
 	)
 
-	emails: List[Email] = Relationship(back_populates="user")
-
-	phone: List[Phone] = Relationship(back_populates="user")
+	phone: Phone = Relationship(
+		back_populates="user",
+        sa_relationship_kwargs={
+            "primaryjoin": "and_(Phone.id_user==UserFrontoffice.id_user, Phone.is_active==True)",
+			"uselist": False,
+			"viewonly": True,
+		}
+	)
 
 	date_insert: datetime
 	

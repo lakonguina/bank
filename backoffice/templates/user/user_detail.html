@@ -3,7 +3,7 @@
 {% block main %}
 
 <h3>Information</h3>
-
+<a href="/user/validate/{{ user.id_user }}">Validate this user</a>
 <div class="card">
   	<div class="card-body">
 		<div>Id: {{ user.id_user }}</div>
@@ -15,11 +15,56 @@
 
 <br>
 <h3>Emails</h3>
-{% for email in user.emails %}
-	{{ email }}
-{% endfor %}
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Email</th>
+			<th>Valid</th>
+			<th>Active</th>
+			<th>Date validation</th>
+			<th>Date insert</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for email in emails %}
+		<tr>
+			<td>{{ email.id_email}}</td>
+			<td>{{ email.email }}</td>
+			<td>{{ email.is_email_active }}</td>
+			<td>{{ email.is_active }}</td>
+			<td>{{ email.date_validation}}</td>
+			<td>{{ email.date_insert }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
 
 <br>
 <h3>Phones</h3>
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Phone</th>
+			<th>Valid</th>
+			<th>Active</th>
+			<th>Date validation</th>
+			<th>Date insert</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for phone in phones %}
+		<tr>
+			<td>{{ phone.id_phone }}</td>
+			<td>{{ phone.phone }}</td>
+			<td>{{ phone.is_phone_active }}</td>
+			<td>{{ phone.is_active }}</td>
+			<td>{{ phone.date_validation}}</td>
+			<td>{{ phone.date_insert }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
 
 {% endblock main %}
