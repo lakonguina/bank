@@ -46,7 +46,7 @@
 
 <div class="flex justify-center">
 	<form 
-		class="bg-white border border-inherit w-full md:w-4/12 py-6 px-6 mt-32 mx-2"
+		class="bg-white border border-inherit w-full md:w-4/12 py-6 px-6 md:mt-32  mt-8 mx-2"
 		on:submit|preventDefault={login}
 	>
 		<div>
