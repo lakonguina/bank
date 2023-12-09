@@ -4,7 +4,7 @@ from sqlmodel import Field, Relationship, SQLModel
 
 
 class CountryIn(SQLModel):
-	alpha3: str = Field(primary_key=True)
+	alpha3: str = Field(primary_key=True, min_length=3, max_length=3)
 
 
 class CountryOut(CountryIn):

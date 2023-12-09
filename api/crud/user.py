@@ -7,6 +7,7 @@ from sqlmodel import Session, select
 from api.schemas.user import User, UserCreate, UserStatus
 from api.schemas.email import Email
 from api.schemas.phone import Phone
+from api.schemas.address import Address
 
 from api.crud.email import get_email
 
@@ -38,6 +39,15 @@ def create_user(session: Session, user: UserCreate) -> User:
 		first_name=user.first_name,
 		last_name=user.last_name,
 		status=status,
+		alpha3=user.country.alpha3,
+	)
+	
+	db_address = Address(
+		user=db_user,
+		street=user.address.street,	
+		alpha3=user.address.alpha3,	
+		city=user.address.city,
+		zip_code=user.address.zip_code,	
 	)
 	
 	db_email = Email(
@@ -51,6 +61,7 @@ def create_user(session: Session, user: UserCreate) -> User:
 	)
 	
 	session.add(db_user)
+	session.add(db_address)
 	session.add(db_email)
 	session.add(db_phone)
 
