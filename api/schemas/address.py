@@ -4,7 +4,7 @@ from datetime import datetime
 
 from sqlmodel import Field, Relationship, SQLModel
 
-from api.schemas.country import CountryOut, Country
+from api.schemas.country import Country
 
 
 class AddressBase(SQLModel):
@@ -18,7 +18,7 @@ class AddressIn(AddressBase):
 
 
 class AddressOut(AddressBase):
-	country: CountryOut
+	country: Country
 	
 
 class Address(AddressIn, table=True):

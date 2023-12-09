@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routes import user
+from api.routes.user import router as router_user
+from api.routes.country import router as router_country
 
 api = FastAPI(
     title="Bank",
@@ -28,4 +29,5 @@ api.add_middleware(
     allow_headers=["*"],
 )
 
-api.include_router(user.router)
+api.include_router(router_user)
+api.include_router(router_country)

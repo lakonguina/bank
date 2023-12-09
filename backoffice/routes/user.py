@@ -6,11 +6,15 @@ from sqlmodel import Session, select
 from backoffice.core.database import get_session_frontoffice
 from backoffice.core.templates import templates
 
+from backoffice.routes.auth import manager
+
 from backoffice.schemas.frontoffice.user import UserFrontoffice, UserStatus
+from backoffice.schemas.frontoffice.address import Address
 from backoffice.schemas.frontoffice.email import Email
 from backoffice.schemas.frontoffice.phone import Phone
+
 from backoffice.schemas.backoffice.user import UserBackoffice
-from backoffice.routes.auth import manager
+
 
 
 router = APIRouter(tags=["Users"])
@@ -48,6 +52,11 @@ def user_detail(
 	if not user:
 		return RedirectResponse("/user/list", status_code=303)
 
+	addresses = session.exec(
+		select(Address)
+		.where(Address.id_user == id_user)
+	).all()
+
 	emails = session.exec(
 		select(Email)
 		.where(Email.id_user == id_user)
@@ -59,6 +68,7 @@ def user_detail(
 	).all()
 	
 	context = {
+		"addresses": addresses, 
 		"emails": emails, 
 		"phones": phones, 
 		"request": request,

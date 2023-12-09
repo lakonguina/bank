@@ -7,12 +7,10 @@ class CountryIn(SQLModel):
 	alpha3: str = Field(primary_key=True, min_length=3, max_length=3)
 
 
-class CountryOut(CountryIn):
-	name: str
-
-
-class Country(CountryOut, table=True):
+class Country(CountryIn, table=True):
 	__tablename__ = "countries"
+
+	name: str
 
 	user: "User" = Relationship(back_populates="country")
 	address: "Address" = Relationship(back_populates="country")

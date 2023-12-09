@@ -10,6 +10,7 @@
 		<div>Firstname: {{ user.first_name }}</div>
 		<div>Lastname: {{ user.last_name }}</div>
 		<div>Status: {{ user.status.slug }}</div>
+		<div>Country: {{ user.country.alpha3 }} - {{ user.country.name }}</div>
   	</div>
 </div>
 
@@ -67,4 +68,30 @@
 	</tbody>
 </table>
 
+<br>
+<h3>Addresses</h3>
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Country</th>
+			<th>City</th>
+			<th>Street</th>
+			<th>Zip code</th>
+			<th>Date insert</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for address in addresses %}
+		<tr>
+			<td>{{ address.id_address }}</td>
+			<td>{{ address.country.alpha3 }} - {{ address.country.name }}</td>
+			<td>{{ address.city }}</td>
+			<td>{{ address.street }}</td>
+			<td>{{ address.zip_code }}</td>
+			<td>{{ address.date_insert }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
 {% endblock main %}

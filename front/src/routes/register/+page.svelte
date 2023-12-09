@@ -1,5 +1,26 @@
 <script>
+	import { onMount } from 'svelte';
+
 	let detail;
+	let countries = [];
+
+
+	async function getCountries() {
+		fetch("http://0.0.0.0:3000/countries", {
+			method: "GET",
+			headers: {"content-type": "application/json"},
+		})
+		.then(function(result){
+			return result.json();
+		})
+		.then(function(data){
+			countries = data;
+		})
+	};
+
+	onMount(() => {
+		getCountries();
+	});
 
 	async function register(event) {
 		detail = null;
@@ -8,6 +29,11 @@
 
 		const firstname = data.get('firstname');
 		const lastname = data.get('lastname');
+		const nationality = data.get('nationality');
+		const residence = data.get('residence');
+		const street = data.get('street');
+		const city = data.get('city');
+		const zipCode = data.get('zipCode');
 		const email = data.get('email');
 		const phone = data.get('phone');
 		const password = data.get('password');
@@ -24,6 +50,15 @@
 			email: email,
 			phone: phone,
 			password: password,
+			country: {
+				alpha3: nationality,
+			},
+			address: {
+				alpha3: residence,
+				street: street,
+				city: city,
+				zip_code: zipCode,
+			}
 		};
 
 		fetch("http://0.0.0.0:3000/user/register", {
@@ -36,7 +71,6 @@
 			return result.json();
 		})
 		.then(function(data){
-			console.log(data);
 			detail = data["detail"];
 		})
 	}
@@ -53,21 +87,90 @@
 		on:submit|preventDefault={register}
 	>
 		<div>
-			<div class="text-base font-bold">Prénom</div>
+			<div class="text-base font-bold">
+				Prénom
+				<span class="text-red-600">*</span>
+			</div>
 			<input
 				class="border border-inherit w-full my-2 py-1 px-1"
-				type="firstname"
+				type="text"
 				name="firstname"
 				required
 			>
 		</div>
 
 		<div>
-			<div class="text-base font-bold">Nom</div>
+			<div class="text-base font-bold">
+				Nom
+				<span class="text-red-600">*</span>
+			</div>
 			<input
 				class="border border-inherit w-full my-2 py-1 px-1"
-				type="lastname"
+				type="text"
 				name="lastname"
+				required
+			>
+		</div>
+		
+		<div>
+			<div class="text-base font-bold">
+				Nationalité
+				<span class="text-red-600">*</span>
+			</div>
+			<select name="nationality" class="border border-inherit bg-white w-full my-2 py-1 px-1">
+				{#each countries as country}
+					<option value={country.alpha3}>{country.name}</option>
+				{/each}
+			  </select>
+		</div>
+
+		<div>
+			<div class="text-base font-bold">
+				Pays d'habitation
+				<span class="text-red-600">*</span>
+			</div>
+			<select name="residence" class="border border-inherit bg-white w-full my-2 py-1 px-1">
+				{#each countries as country}
+					<option value={country.alpha3}>{country.name}</option>
+				{/each}
+			</select>
+		</div>
+
+		<div>
+			<div class="text-base font-bold">
+				Rue
+				<span class="text-red-600">*</span>
+			</div>
+			<input
+				class="border border-inherit w-full my-2 py-1 px-1"
+				type="text"
+				name="street"
+				required
+			>
+		</div>
+
+		<div>
+			<div class="text-base font-bold">
+				Ville
+				<span class="text-red-600">*</span>
+			</div>
+			<input
+				class="border border-inherit w-full my-2 py-1 px-1"
+				type="text"
+				name="city"
+				required
+			>
+		</div>
+
+		<div>
+			<div class="text-base font-bold">
+				Code postal
+				<span class="text-red-600">*</span>
+			</div>
+			<input
+				class="border border-inherit w-full my-2 py-1 px-1"
+				type="text"
+				name="zipCode"
 				required
 			>
 		</div>

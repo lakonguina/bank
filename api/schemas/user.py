@@ -5,7 +5,7 @@ from sqlmodel import Field, Relationship, SQLModel
 
 from api.schemas.email import Email, EmailField, EmailOut
 from api.schemas.phone import Phone, PhoneField, PhoneOut
-from api.schemas.country import Country, CountryIn, CountryOut
+from api.schemas.country import Country, CountryIn
 from api.schemas.address import Address, AddressIn, AddressOut
 
 
@@ -80,5 +80,5 @@ class UserInformation(UserBase):
 	status: UserStatusOut
 	email: EmailOut
 	phone: PhoneOut
-	country: CountryOut
+	country: Country
 	address: AddressOut
