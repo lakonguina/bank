@@ -12,7 +12,7 @@ class EmailField(SQLModel):
 
 
 class EmailOut(EmailField):
-	is_email_active: bool = Field(default=False)
+	is_valid: bool = Field(default=False)
 
 
 class Email(EmailOut, table=True):

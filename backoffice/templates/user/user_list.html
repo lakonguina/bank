@@ -23,7 +23,7 @@
 				<td>
 					{{ user.email.email }}
 
-					{% if user.email.is_email_active %}
+					{% if user.email.is_valid %}
 						✅							
 					{% else %}
 						❌
@@ -32,7 +32,7 @@
 				<td>
 					{{ user.phone.phone }}
 
-					{% if user.phone.is_phone_active %}
+					{% if user.phone.is_valid %}
 						✅							
 					{% else %}
 						❌

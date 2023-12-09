@@ -13,7 +13,7 @@
 </svelte:head>
 
 {#if $user}
-	{#if $user.status.slug == "waiting-for-validation" || $user.email.is_email_active == false}
+	{#if $user.status.slug == "waiting-for-validation" || $user.email.is_valid == false}
 		<div
 			class="mt-48 text-center font-bold"
 		>
@@ -31,7 +31,7 @@
 				{/if}
 			</div>
 			<div class="flex items-center justify-center">
-				{#if $user.email.is_email_active == false }
+				{#if $user.email.is_valid == false }
 					<svg class="h-4 me-2 text-orange-500 dark:text-orange-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="#ffffff" >
 						<circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>
 					</svg>

@@ -10,7 +10,7 @@ class PhoneField(SQLModel):
 
 
 class PhoneOut(PhoneField):
-    is_phone_active: bool = Field(default=False)
+    is_valid: bool = Field(default=False)
 
 
 class Phone(PhoneField, table=True):

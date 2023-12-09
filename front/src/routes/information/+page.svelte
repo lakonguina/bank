@@ -17,7 +17,7 @@
 	<div>Lastname: {$user.last_name}</div>
 	<div>
 		Email: {$user.email.email} -
-		{#if $user.email.is_email_active }
+		{#if $user.email.is_valid }
 			Validé
 		{:else}
 			Valider votre email
@@ -25,7 +25,7 @@
 	</div>
 	<div>
 		Phone: {$user.phone.phone} - 
-		{#if $user.phone.is_phone_active }
+		{#if $user.phone.is_valid }
 			Validé
 		{:else}
 			Valider votre téléphone

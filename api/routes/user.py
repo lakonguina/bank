@@ -104,7 +104,7 @@ def user_send_email(
 ):
 	db_email = get_email_by_user(session, id_user)
 
-	if db_email.is_email_active == True:
+	if db_email.is_valid == True:
 		raise HTTPException(
 			status_code=400,
 			detail="Email is already validated"
@@ -136,13 +136,13 @@ def user_verify_email(
 			detail="Email not found"
 		)
 
-	if db_email.is_email_active:
+	if db_email.is_valid:
 		raise HTTPException(
 			status_code=400,
 			detail="Email already validated"
 		)
 
-	db_email.is_email_active = True
+	db_email.is_valid = True
 	db_email.date_validation = datetime.now()
 
 	session.add(db_email)
