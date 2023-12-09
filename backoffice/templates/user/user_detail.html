@@ -1,97 +1,111 @@
 {% extends "core/base.html" %}
 
-{% block main %}
+{% from "macro.html" import bool_to_emoji %}
+{% from "macro.html" import user_status %}
 
+{% block main %}
 <h3>Information</h3>
-<a href="/user/validate/{{ user.id_user }}">Validate this user</a>
+
+<a href="/user/validate/{{ user.id_user }}">
+	<button>Validate this user</button>
+</a>
+
 <div class="card">
   	<div class="card-body">
 		<div>Id: {{ user.id_user }}</div>
 		<div>Firstname: {{ user.first_name }}</div>
 		<div>Lastname: {{ user.last_name }}</div>
-		<div>Status: {{ user.status.slug }}</div>
+		<div>Status: {{ user_status(user.status) }}</div>
 		<div>Country: {{ user.country.alpha3 }} - {{ user.country.name }}</div>
   	</div>
 </div>
 
 <br>
 <h3>Emails</h3>
-<table class="table table-bordered">
-	<thead>
-		<tr>
-			<th>Id</th>
-			<th>Email</th>
-			<th>Valid</th>
-			<th>Active</th>
-			<th>Date validation</th>
-			<th>Date insert</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for email in emails %}
-		<tr>
-			<td>{{ email.id_email}}</td>
-			<td>{{ email.email }}</td>
-			<td>{{ email.is_valid }}</td>
-			<td>{{ email.is_active }}</td>
-			<td>{{ email.date_validation}}</td>
-			<td>{{ email.date_insert }}</td>
-		</tr>
-		{% endfor %}
-	</tbody>
-</table>
+<div class="table-responsive">
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Email</th>
+				<th>Valid</th>
+				<th>Active</th>
+				<th>Date validation</th>
+				<th>Date insert</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for email in emails %}
+			<tr>
+				<td>{{ email.id_email}}</td>
+				<td>{{ email.email }}</td>
+				<td>{{ bool_to_emoji(email.is_valid) }}</td>
+				<td>{{ bool_to_emoji(email.is_active) }}</td>
+				<td>{{ email.date_validation}}</td>
+				<td>{{ email.date_insert }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
 
 <br>
 <h3>Phones</h3>
-<table class="table table-bordered">
-	<thead>
-		<tr>
-			<th>Id</th>
-			<th>Phone</th>
-			<th>Valid</th>
-			<th>Active</th>
-			<th>Date validation</th>
-			<th>Date insert</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for phone in phones %}
-		<tr>
-			<td>{{ phone.id_phone }}</td>
-			<td>{{ phone.phone }}</td>
-			<td>{{ phone.is_valid }}</td>
-			<td>{{ phone.is_active }}</td>
-			<td>{{ phone.date_validation}}</td>
-			<td>{{ phone.date_insert }}</td>
-		</tr>
-		{% endfor %}
-	</tbody>
-</table>
+<div class="table-responsive">
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Phone</th>
+				<th>Valid</th>
+				<th>Active</th>
+				<th>Date validation</th>
+				<th>Date insert</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for phone in phones %}
+			<tr>
+				<td>{{ phone.id_phone }}</td>
+				<td>{{ phone.phone }}</td>
+				<td>{{ bool_to_emoji(phone.is_valid) }}</td>
+				<td>{{ bool_to_emoji(phone.is_active) }}</td>
+				<td>{{ phone.date_validation}}</td>
+				<td>{{ phone.date_insert }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
 
 <br>
 <h3>Addresses</h3>
-<table class="table table-bordered">
-	<thead>
-		<tr>
-			<th>Id</th>
-			<th>Country</th>
-			<th>City</th>
-			<th>Street</th>
-			<th>Zip code</th>
-			<th>Date insert</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for address in addresses %}
-		<tr>
-			<td>{{ address.id_address }}</td>
-			<td>{{ address.country.alpha3 }} - {{ address.country.name }}</td>
-			<td>{{ address.city }}</td>
-			<td>{{ address.street }}</td>
-			<td>{{ address.zip_code }}</td>
-			<td>{{ address.date_insert }}</td>
-		</tr>
-		{% endfor %}
-	</tbody>
-</table>
+<div class="table-responsive">
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Country</th>
+				<th>City</th>
+				<th>Street</th>
+				<th>Zip code</th>
+				<th>Active</th>
+				<th>Date insert</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for address in addresses %}
+			<tr>
+				<td>{{ address.id_address }}</td>
+				<td>{{ address.country.alpha3 }} - {{ address.country.name }}</td>
+				<td>{{ address.city }}</td>
+				<td>{{ address.street }}</td>
+				<td>{{ address.zip_code }}</td>
+				<td>{{ bool_to_emoji(address.is_active) }}</td>
+				<td>{{ address.date_insert }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
 {% endblock main %}

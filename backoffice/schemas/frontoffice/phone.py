@@ -20,5 +20,6 @@ class Phone(PhoneField, table=True):
 	id_user: int = Field(foreign_key="users.id_user") 
 	is_active: bool = Field(default=True)
 	date_validation: Optional[datetime]
+	date_insert: datetime
 
 	user: "UserFrontoffice" = Relationship(back_populates="phone")

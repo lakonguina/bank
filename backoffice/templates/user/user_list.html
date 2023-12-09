@@ -1,52 +1,48 @@
 {% extends "core/base.html" %}
 
+{% from "macro.html" import bool_to_emoji %}
+{% from "macro.html" import user_status %}
+
 {% block main %}
-	<table class="table table-bordered">
-		<thead>
-			<tr>
-				<th>Id</th>
-				<th>Firstname</th>
-				<th>Lastname</th>
-				<th>Email</th>
-				<th>Phone</th>
-				<th>Status</th>
-				<th>Date insert</th>
-				<th>Action</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for user in users %}
-			<tr>
-				<td>{{ user.id_user }}</td>
-				<td>{{ user.first_name }}</td>
-				<td>{{ user.last_name }}</td>
-				<td>
-					{{ user.email.email }}
+	<div class="table-responsive">
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Firstname</th>
+					<th>Lastname</th>
+					<th>Email</th>
+					<th>Phone</th>
+					<th>Status</th>
+					<th>Date insert</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for user in users %}
+				<tr>
+					<td>{{ user.id_user }}</td>
+					<td>{{ user.first_name }}</td>
+					<td>{{ user.last_name }}</td>
+					<td>
+						{{ user.email.email }}
+						{{ bool_to_emoji( user.email.is_valid) }}
+					</td>
+					<td>
+						{{ user.phone.phone }}
 
-					{% if user.email.is_valid %}
-						✅							
-					{% else %}
-						❌
-					{% endif %}
-				</td>
-				<td>
-					{{ user.phone.phone }}
-
-					{% if user.phone.is_valid %}
-						✅							
-					{% else %}
-						❌
-					{% endif %}
-				</td>
-				<td>{{ user.status.slug }}</td>
-				<td>{{ user.date_insert }}</td>
-				<td>
-					<a href="/user/{{ user.id_user }}">
-						Voir
-					</a>	
-				</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+						{{ bool_to_emoji( user.phone.is_valid) }}
+					</td>
+					<td>{{ user_status(user.status) }}</td>
+					<td>{{ user.date_insert }}</td>
+					<td>
+						<a href="/user/{{ user.id_user }}">
+							Voir
+						</a>	
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
 {% endblock main %}
