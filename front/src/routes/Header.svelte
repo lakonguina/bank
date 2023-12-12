@@ -42,7 +42,7 @@
 					<Button link="/register" text="Ouvrir un compte"/>
 				{:else}
 					<Button link="/dashboard" text="Accéder à l'application"/>
-					<Button text="Mon compte"/>
+					<Button link="/information" text="Mon compte"/>
 				{/if}
 			</div>	
 

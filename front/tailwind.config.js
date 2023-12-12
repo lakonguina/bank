@@ -7,6 +7,8 @@ export default {
       'blue': '#187aba',
       'grey': '#e7e7e7',
       'red': '#ff0000',
+      'green': '#008000',
+      'orange': '#ff7f00'
     },
     extend: {}
   },

@@ -85,20 +85,53 @@
 	<meta name="description" content="Register" />
 </svelte:head>
 
-<div class="flex justify-center">
+<div class="md:flex">
+	<div class="flex-1 bg-blue hidden lg:block">
+		<div class="mt-16 text-white text-center">
+			<p class="text-4xl font-bold">Ouvrir un compte</p>
+			<p class="mt-2">1. Renseigner ses informations personnelles et coordonnées.</p>
+			<p class="mt-2">2. Confirmé son email ou son téléphone</p>
+			<p class="mt-2">3. Attendre la validation de son compte</p>
+		</div>
+	</div>
 	<form 
-		class="bg-white border border-inherit w-full md:w-4/12 py-6 px-6 md:mt-32  mt-8 mx-2"
+		class="bg-white flex-1 mx-4 my-2"
 		on:submit|preventDefault={register}
 	>
-		<Input text="Prénom" type="text" name="firstname" required={true}/>
-		<Input text="Nom" type="text" name="lastname" required={true}/>
+		<p class="text-xl font-bold">Informations personelles</p>
+		<div class="md:flex gap-2">
+			<div class="flex-1">
+				<Input text="Prénom" type="text" name="firstname" required={true}/>
+			</div>
+			<div class="flex-1">
+				<Input text="Nom" type="text" name="lastname" required={true}/>
+			</div>
+		</div>
 		<Select text="Nationalité" name="nationality" data={countries} value="alpha3" valueName="name" required={true}/>
-		<Select text="Pays d'habitation" name="residence" data={countries} value="alpha3" valueName="name" required={true}/>
+
+		<p class="text-xl font-bold mt-4">Addresse</p>
+		<div class="md:flex gap-2">
+			<div class="flex-1">
+				<Input text="Ville" type="text" name="city" required={true}/>
+			</div>
+			<div class="flex-1">
+				<Input text="Code postal" type="text" name="zipCode" required={true}/>
+			</div>
+		</div>
 		<Input text="Rue" type="text" name="street" required={true}/>
-		<Input text="Ville" type="text" name="city" required={true}/>
-		<Input text="Code postal" type="text" name="zipCode" required={true}/>
-		<Input text="Email" type="email" name="email" required={true}/>
-		<Input text="Téléphone" type="text" name="phone" required={true}/>
+		<Select text="Pays d'habitation" name="residence" data={countries} value="alpha3" valueName="name" required={true}/>
+
+		<p class="text-xl font-bold mt-4">Coordonnées</p>
+		<div class="md:flex gap-2">
+			<div class="flex-1">
+				<Input text="Email" type="email" name="email" required={true}/>
+			</div>
+			<div class="flex-1">
+				<Input text="Téléphone" type="text" name="phone" required={true}/>
+			</div>
+		</div>
+
+		<p class="text-xl font-bold mt-4">Validation</p>
 		<Input text="Mot de passe" type="password" name="password" required={true}/>
 		<Input text="Confirmé Mot de passe" type="password" name="passwordConfirm" required={true}/>
 		<Button text="S'enregistrer" type="submit"/>

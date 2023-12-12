@@ -2,6 +2,9 @@
 	import { JWT } from '../store.js';	
 	import { goto } from '$app/navigation';
 
+	import Button from '../Button.svelte';
+	import Input from '../Input.svelte';
+
 	let detail;
 
 	async function login(event) {
@@ -46,36 +49,15 @@
 
 <div class="flex justify-center">
 	<form 
-		class="bg-white border border-inherit w-full md:w-4/12 py-6 px-6 md:mt-32  mt-8 mx-2"
+		class="bg-white border-2 border-grey border-t-8 border-t-blue w-full md:w-4/12 py-6 px-6 md:mt-32  mt-8 mx-2"
 		on:submit|preventDefault={login}
 	>
-		<div>
-			<div class="text-base font-bold">Email</div>
-			<input
-				class="border border-inherit w-full my-2 py-1 px-1"
-				type="email"
-				name="email"
-				required
-			>
+		<Input text="Email" type="email" name="email" required={true} />
+		<Input text="Mot de passe" type="password" name="password" required={true} />
+		<div class="mt-2">
+			<Button text="Se connecter" type="submit" />
 		</div>
-
-		<div>
-			<div class="text-base font-bold">Mot de passe</div>
-			<input
-				class="border border-inherit w-full my-2 py-1 px-1"
-				type="password"
-				name="password"
-				required
-			>
-		</div>
-
-		<button 
-			class="bg-blue-500 hover:bg-blue-700 text-white py-2 mt-2 w-full"
-			type="submit"
-		>
-			Se connecter
-		</button>
-
+		<p class="mt-2">Mot de passe oublié?</p>
 		{#if detail}
 			<div 
 				class="bg-blue-100 mt-2 px-2 py-2 font-bold"

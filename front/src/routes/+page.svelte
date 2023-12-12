@@ -7,7 +7,7 @@
 	<meta name="description" content="Bank demo app" />
 </svelte:head>
 
-<div>
+<div class="mb-16">
 	<img
 		src={Building}
 		class=""

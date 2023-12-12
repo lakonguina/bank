@@ -1,4 +1,4 @@
-<footer class="2xl:px-96 lg:px-48 px-6 py-16 mt-16 bg-grey">
+<footer class="2xl:px-96 lg:px-48 px-6 py-16 bg-grey">
     <div class="md:flex justify-between">
         <div>
             <p class="font-bold">Compte</p>
