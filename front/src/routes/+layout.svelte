@@ -4,7 +4,7 @@
 	import "../app.css";
 </script>
 
-<div class="app">
+<div class="flex flex-col min-h-screen">
 	<Header />
 
 	<main>

@@ -35,7 +35,7 @@ def create_jwt(sub: str, use: str) -> str:
     exp = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 
     payload = {
-        "exp": exp, # Expiration
+        #"exp": exp, # Expiration
         "sub": sub, # Subject eg: id_user, id_email
         "use": use, # Use of this JWT eg: login, reset-password-be-email
     }

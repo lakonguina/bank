@@ -1,6 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
 
+	import Input from '../Input.svelte';
+	import Button from '../Button.svelte';
+	import Select from '../Select.svelte';
+
 	let detail;
 	let countries = [];
 
@@ -86,141 +90,18 @@
 		class="bg-white border border-inherit w-full md:w-4/12 py-6 px-6 md:mt-32  mt-8 mx-2"
 		on:submit|preventDefault={register}
 	>
-		<div>
-			<div class="text-base font-bold">
-				Prénom
-				<span class="text-red-600">*</span>
-			</div>
-			<input
-				class="border border-inherit w-full my-2 py-1 px-1"
-				type="text"
-				name="firstname"
-				required
-			>
-		</div>
-
-		<div>
-			<div class="text-base font-bold">
-				Nom
-				<span class="text-red-600">*</span>
-			</div>
-			<input
-				class="border border-inherit w-full my-2 py-1 px-1"
-				type="text"
-				name="lastname"
-				required
-			>
-		</div>
-		
-		<div>
-			<div class="text-base font-bold">
-				Nationalité
-				<span class="text-red-600">*</span>
-			</div>
-			<select name="nationality" class="border border-inherit bg-white w-full my-2 py-1 px-1">
-				{#each countries as country}
-					<option value={country.alpha3}>{country.name}</option>
-				{/each}
-			  </select>
-		</div>
-
-		<div>
-			<div class="text-base font-bold">
-				Pays d'habitation
-				<span class="text-red-600">*</span>
-			</div>
-			<select name="residence" class="border border-inherit bg-white w-full my-2 py-1 px-1">
-				{#each countries as country}
-					<option value={country.alpha3}>{country.name}</option>
-				{/each}
-			</select>
-		</div>
-
-		<div>
-			<div class="text-base font-bold">
-				Rue
-				<span class="text-red-600">*</span>
-			</div>
-			<input
-				class="border border-inherit w-full my-2 py-1 px-1"
-				type="text"
-				name="street"
-				required
-			>
-		</div>
-
-		<div>
-			<div class="text-base font-bold">
-				Ville
-				<span class="text-red-600">*</span>
-			</div>
-			<input
-				class="border border-inherit w-full my-2 py-1 px-1"
-				type="text"
-				name="city"
-				required
-			>
-		</div>
-
-		<div>
-			<div class="text-base font-bold">
-				Code postal
-				<span class="text-red-600">*</span>
-			</div>
-			<input
-				class="border border-inherit w-full my-2 py-1 px-1"
-				type="text"
-				name="zipCode"
-				required
-			>
-		</div>
-
-		<div>
-			<div class="text-base font-bold">Email</div>
-			<input
-				class="border border-inherit w-full my-2 py-1 px-1"
-				type="email"
-				name="email"
-				required
-			>
-		</div>
-
-		<div>
-			<div class="text-base font-bold">Téléphone</div>
-			<input
-				class="border border-inherit w-full my-2 py-1 px-1"
-				type="text"
-				name="phone"
-				required
-			>
-		</div>
-
-		<div>
-			<div class="text-base font-bold">Mot de passe</div>
-			<input
-				class="border border-inherit w-full my-2 py-1 px-1"
-				type="password"
-				name="password"
-				required
-			>
-		</div>
-
-		<div>
-			<div class="text-base font-bold">Confirmé le mot de passe</div>
-			<input
-				class="border border-inherit w-full my-2 py-1 px-1"
-				type="password"
-				name="passwordConfirm"
-				required
-			>
-		</div>
-
-		<button 
-			class="bg-blue-500 hover:bg-blue-700 text-white py-2 mt-2 w-full"
-			type="submit"
-		>
-			S'enregistrer
-		</button>
+		<Input text="Prénom" type="text" name="firstname" required={true}/>
+		<Input text="Nom" type="text" name="lastname" required={true}/>
+		<Select text="Nationalité" name="nationality" data={countries} value="alpha3" valueName="name" required={true}/>
+		<Select text="Pays d'habitation" name="residence" data={countries} value="alpha3" valueName="name" required={true}/>
+		<Input text="Rue" type="text" name="street" required={true}/>
+		<Input text="Ville" type="text" name="city" required={true}/>
+		<Input text="Code postal" type="text" name="zipCode" required={true}/>
+		<Input text="Email" type="email" name="email" required={true}/>
+		<Input text="Téléphone" type="text" name="phone" required={true}/>
+		<Input text="Mot de passe" type="password" name="password" required={true}/>
+		<Input text="Confirmé Mot de passe" type="password" name="passwordConfirm" required={true}/>
+		<Button text="S'enregistrer" type="submit"/>
 
 		{#if detail}
 			<div 
