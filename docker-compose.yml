@@ -67,8 +67,8 @@ services:
     #  - ./front:/app/front
 	# Making work vite because "mount an anonymous persistent volume to node_modules to prevent your local overriding it"
     volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
+      - ./front:/app/front
+      - /app/front/node_modules
 
 volumes:
   db:
