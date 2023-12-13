@@ -2,8 +2,10 @@ version: '3'
 
 services:
   db:
-    image: postgres:15-bullseye
     restart: always
+    build:
+      context: ./sql
+      dockerfile: ./Dockerfile
     environment:
       - POSTGRES_USER=$POSTGRES_USER
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
@@ -61,8 +63,12 @@ services:
       - "7000:7000"
     env_file:
       - .env
+    #volumes:
+    #  - ./front:/app/front
+	# Making work vite because "mount an anonymous persistent volume to node_modules to prevent your local overriding it"
     volumes:
-      - ./front:/app/front
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
 
 volumes:
   db:
