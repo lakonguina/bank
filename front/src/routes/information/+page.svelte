@@ -1,10 +1,19 @@
 <script>
-	import { user, getUserInformation } from '../store.js';	
     import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+	import { JWT, user, getUserInformation } from '../store.js';	
+
+	import Button from '../Button.svelte';
 
 	onMount(() => {
 		getUserInformation();
 	});
+
+	async function disconnect() {
+		$JWT = "false";
+		$user = null;
+		goto('/login')
+	}
 </script>
 
 <svelte:head>
@@ -52,6 +61,9 @@
 					<span class="bg-orange p-1 text-white font-bold">Téléphone non validé</span>
 				{/if}
 			</div>
+		</div>
+		<div class="mt-2">
+			<Button text="Se déconnecter" action={disconnect}/>
 		</div>
 	</div>
 </div>

@@ -1,10 +1,7 @@
 <script>
-	import { JWT, user } from './store.js';	
-	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
-
-	import Button from './Button.svelte';
 	import logo from "$lib/images/logo.png"
+	import { JWT } from './store.js';	
+	import Button from './Button.svelte';
 
 
 	async function show() {
@@ -17,11 +14,7 @@
 		}
 	}
 
-	async function disconnect() {
-		$JWT = "false";
-		$user = null;
-		goto('/login')
-	}
+
 </script>
 
 <header>
@@ -75,18 +68,8 @@
 			<div class="px-4 mt-2">
 				<Button link="/dashboard" text="Accéder à l'application"/>
 			</div>
-
-			<!-- Dropdown -->
-			<div class="px-4 mt-2 w-fit">
-				<details class="bg-blue text-white py-1 px-4">
-					<summary class="font-bold">
-						Mon compte
-					</summary>
-					<ul>
-						<li class="mt-2">Paramètres</li>
-						<button on:click={disconnect} class="mt-2">Déconnexion</button>
-					</ul>
-	  			</details>
+			<div class="px-4 mt-2">
+				<Button link="/information" text="Mon compte"/>
 			</div>
 		{/if}
 </div>
