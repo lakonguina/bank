@@ -13,6 +13,10 @@ class Settings(BaseSettings):
 	PORT: str = os.environ.get("API_PORT")
 	URI: str = f"{URL}:{PORT}"
 
+	URL_FRONTEND: str = "http://0.0.0.0"
+	PORT_FRONTEND: str = "7000"
+	URI_FRONTEND: str = f"{URL_FRONTEND}:{PORT_FRONTEND}"
+
 	# Security
 	SECRET_KEY: str = os.environ.get("API_SECRET_KEY")
 	ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 60

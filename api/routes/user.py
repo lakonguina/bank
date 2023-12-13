@@ -56,7 +56,7 @@ def user_register(
 		JWTSlug.verify_email,
 	)
 
-	url = f"{settings.URI}/user/email/verify/{token}"
+	url = f"{settings.URI_FRONTEND}/validate-email/{token}"
 
 	validate_email(user.email, url)
 
@@ -115,7 +115,7 @@ def user_send_email(
 		JWTSlug.verify_email,
 	)
 
-	url = f"{settings.URI}/user/email/verify/{jwt}"
+	url = f"{settings.URI_FRONTEND}/validate-email/{jwt}"
 
 	validate_email(db_email.email, url)
 
@@ -178,7 +178,7 @@ def user_reset_password_by_email(
 		JWTSlug.reset_password,
 	)
 
-	url = f"{settings.URI}/user/reset-password/{token}"
+	url = f"{settings.URI_FRONTEND}/validate-email/{token}"
 
 	reset_password(email.email, url)
 	
