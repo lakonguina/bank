@@ -13,6 +13,3 @@
 
 	<Footer/>
 </div>
-
-<style>
-</style>

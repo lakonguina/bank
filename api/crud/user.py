@@ -2,6 +2,8 @@ from typing import Optional
 
 from pydantic import EmailStr
 
+from fastapi import HTTPException
+
 from sqlmodel import Session, select
 
 from api.schemas.user import User, UserCreate, UserStatus
@@ -10,6 +12,7 @@ from api.schemas.phone import Phone
 from api.schemas.address import Address
 
 from api.crud.email import get_email
+from api.crud.country import get_country
 
 from api.dependencies.security import get_password_hash
 
@@ -30,8 +33,23 @@ def get_user_by_email(session: Session, email: EmailStr) -> User:
 	return db_user
 
 def create_user(session: Session, user: UserCreate) -> User:
-	status = get_user_status(session, "waiting-for-validation")
+	nationality = get_country(session, user.country.alpha3)
+	
+	if not nationality:
+		raise HTTPException(
+			status_code=400,
+			detail="The country of your nationality do not exist",
+		)
+		
+	residence = get_country(session, user.address.alpha3)
 
+	if not residence:
+		raise HTTPException(
+			status_code=400,
+			detail="The country of your nationality do not exist",
+		)
+
+	status = get_user_status(session, "waiting-for-validation")
 	hashed_password = get_password_hash(user.password)
 
 	db_user = User(

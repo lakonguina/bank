@@ -16,12 +16,6 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Information</title>
-	<meta name="description" content="Information" />
-</svelte:head>
-
-
 {#if $user}
 <div class="flex px-96 pt-16">
 	<div class="flex-none w-56 border-r-2 border-grey">

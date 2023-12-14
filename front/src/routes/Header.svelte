@@ -49,7 +49,7 @@
 	</div>
 </header>
 
-<div id="sidebar" class="fixed h-screen top-0 right-0 mt-14 bg-white md:invisible w-2/3" style="display:none;">
+<div id="sidebar" class="fixed h-screen top-0 right-0 mt-24 bg-white md:invisible md:w-2/3 w-full" style="display:none;">
 		<div class="px-4 mt-2">
 			<a href="/">Tarifications</a>
 		</div>
@@ -68,7 +68,7 @@
 			<div class="px-4 mt-2">
 				<Button link="/dashboard" text="Accéder à l'application"/>
 			</div>
-			<div class="px-4 mt-2">
+			<div class="px-4 mt-4">
 				<Button link="/information" text="Mon compte"/>
 			</div>
 		{/if}

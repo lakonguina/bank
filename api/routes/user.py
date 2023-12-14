@@ -9,7 +9,7 @@ from sqlmodel import Session
 from api.core.database import engine, get_session
 from api.core.settings import settings
 
-from api.dependencies.security import verify_password, create_jwt, decode_jwt, has_access, get_password_hash, JWTSlug
+from api.dependencies.security import password_check, verify_password, create_jwt, decode_jwt, has_access, get_password_hash, JWTSlug
 
 from api.dependencies.email import validate_email, reset_password
 
@@ -30,6 +30,9 @@ def user_register(
 	user: UserCreate,
 	session: Session = Depends(get_session),
 ):
+	#print(user.password)
+	#test = password_check(user.password)
+	#print(test)
 	# Check if phone and email are not used
 	email = get_email(session, user.email)
 

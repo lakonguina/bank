@@ -42,11 +42,6 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Login</title>
-	<meta name="description" content="Login" />
-</svelte:head>
-
 <div class="flex justify-center">
 	<form 
 		class="bg-white border-2 border-grey border-t-8 border-t-blue w-full md:w-4/12 py-6 px-6 md:mt-32  mt-8 mx-2"

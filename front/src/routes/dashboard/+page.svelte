@@ -7,15 +7,10 @@
 	});
 </script>
 
-<svelte:head>
-	<title>Dashboard</title>
-	<meta name="description" content="Dashboard" />
-</svelte:head>
-
 {#if $user}
 	{#if $user.status.slug == "waiting-for-validation" || $user.email.is_valid == false}
 		<div
-			class="mt-48 text-center font-bold"
+			class="my-48 text-center font-bold"
 		>
 			<div class="flex items-center justify-center">
 				{#if $user.status.slug == "waiting-for-validation" }
