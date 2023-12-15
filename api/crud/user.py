@@ -38,7 +38,7 @@ def create_user(session: Session, user: UserCreate) -> User:
 	if not nationality:
 		raise HTTPException(
 			status_code=400,
-			detail="The country of your nationality do not exist",
+			detail="The country of your nationality do not exist"
 		)
 		
 	residence = get_country(session, user.address.alpha3)
@@ -46,7 +46,7 @@ def create_user(session: Session, user: UserCreate) -> User:
 	if not residence:
 		raise HTTPException(
 			status_code=400,
-			detail="The country of your nationality do not exist",
+			detail="The country of your residence do not exist"
 		)
 
 	status = get_user_status(session, "waiting-for-validation")

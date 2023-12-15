@@ -50,6 +50,14 @@ def user_register(
 			detail="Phone is already registered and active"
 		)
 
+	password_res: dict[str, bool] = password_check(user.password)
+	
+	if not password_res['password_ok']:
+		raise HTTPException(
+			status_code=409,
+			detail=password_res,
+		)
+
 	# Create user
 	db_email = create_user(session, user)
 
