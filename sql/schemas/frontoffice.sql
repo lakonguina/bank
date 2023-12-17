@@ -62,19 +62,17 @@ CREATE TABLE IF NOT EXISTS emails (
 	CONSTRAINT fk_user FOREIGN KEY(id_user) REFERENCES users(id_user)
 );
 
-/*
-CREATE TABLE IF NOT EXISTS documents_type (
-	id_document_type SERIAL PRIMARY KEY,
-	slug VARCHAR(32) NOT NULL,
+CREATE TABLE IF NOT EXISTS documents_users_type (
+	id_document_user_type SERIAL PRIMARY KEY,
+	slug VARCHAR(32) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS documents (
+CREATE TABLE IF NOT EXISTS documents_users (
 	id_document SERIAL PRIMARY KEY,
 	id_user INT NOT NULL,
-	id_document_type VARCHAR(320) NOT NULL,
+	id_document_user_type INT NOT NULL,
 	is_valid BOOLEAN NOT NULL DEFAULT FALSE,
 	date_insert TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	CONSTRAINT fk_user KEY(id_user) REFERENCES users(id_user),
-	CONSTRAINT fk_document_type KEY(id_document_type) REFERENCES documents_type(id_document_type)
+	CONSTRAINT fk_user FOREIGN KEY(id_user) REFERENCES users(id_user),
+	CONSTRAINT fk_document_user_type FOREIGN KEY(id_document_user_type) REFERENCES documents_users_type(id_document_user_type)
 );
-*/

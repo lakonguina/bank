@@ -1,12 +1,10 @@
 from datetime import datetime
 
-from pydantic import EmailStr
-
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile
 
 from sqlmodel import Session
 
-from api.core.database import engine, get_session
+from api.core.database import get_session
 from api.core.settings import settings
 
 from api.dependencies.security import password_check, verify_password, create_jwt, decode_jwt, has_access, get_password_hash, JWTSlug
@@ -14,12 +12,13 @@ from api.dependencies.security import password_check, verify_password, create_jw
 from api.dependencies.email import validate_email, reset_password
 
 from api.schemas.detail import Detail
-from api.schemas.user import User, UserCreate, UserInformation, UserLoginByEmail, UserPasswordField, UserStatus
+from api.schemas.document import DocumentUserTypeSlug
+from api.schemas.user import UserCreate, UserInformation, UserLoginByEmail, UserPasswordField
 from api.schemas.token import Token
-from api.schemas.email import Email, EmailField
+from api.schemas.email import EmailField
 
 from api.crud.email import get_email, get_email_by_id, get_email_by_user
-from api.crud.phone import get_phone, get_phone_by_user
+from api.crud.phone import get_phone
 from api.crud.user import create_user, get_user_by_email, get_user_by_id
 
 
@@ -30,10 +29,6 @@ def user_register(
 	user: UserCreate,
 	session: Session = Depends(get_session),
 ):
-	#print(user.password)
-	#test = password_check(user.password)
-	#print(test)
-	# Check if phone and email are not used
 	email = get_email(session, user.email)
 
 	if email:

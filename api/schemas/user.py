@@ -1,12 +1,12 @@
-from typing import List, Optional
 from datetime import datetime
 
 from sqlmodel import Field, Relationship, SQLModel
 
+from api.schemas.address import Address, AddressIn, AddressOut
+from api.schemas.country import Country, CountryIn
 from api.schemas.email import Email, EmailField, EmailOut
 from api.schemas.phone import Phone, PhoneField, PhoneOut
-from api.schemas.country import Country, CountryIn
-from api.schemas.address import Address, AddressIn, AddressOut
+from api.schemas.document import DocumentUser, DocumentUserTypeSlug
 
 
 class UserStatusOut(SQLModel):
@@ -17,7 +17,7 @@ class UserStatus(UserStatusOut, table=True):
 	__tablename__ = "users_status"
 
 	id_user_status: int = Field(primary_key=True)
-	user: List["User"] = Relationship(back_populates="status")
+	user: list["User"] = Relationship(back_populates="status")
 
 
 class UserPasswordField(SQLModel):
@@ -32,7 +32,7 @@ class UserBase(SQLModel):
 class User(UserBase, UserPasswordField, table=True):
 	__tablename__ = "users"
 
-	id_user: Optional[int] = Field(primary_key=True)
+	id_user: int | None = Field(primary_key=True)
 	id_user_status: int = Field(foreign_key="users_status.id_user_status")
 	alpha3: str = Field(foreign_key="countries.alpha3")
 
@@ -66,10 +66,13 @@ class User(UserBase, UserPasswordField, table=True):
 		}
 	)
 
+	document: DocumentUser = Relationship(back_populates="user")
+
 
 class UserCreate(UserBase, UserPasswordField, EmailField, PhoneField):
 	country: CountryIn
 	address: AddressIn
+	document: DocumentUserTypeSlug
 
 
 class UserLoginByEmail(EmailField, UserPasswordField):

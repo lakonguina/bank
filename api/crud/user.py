@@ -6,13 +6,13 @@ from fastapi import HTTPException
 
 from sqlmodel import Session, select
 
-from api.schemas.user import User, UserCreate, UserStatus
+from api.schemas.address import Address
 from api.schemas.email import Email
 from api.schemas.phone import Phone
-from api.schemas.address import Address
+from api.schemas.user import User, UserCreate, UserStatus
 
-from api.crud.email import get_email
 from api.crud.country import get_country
+from api.crud.email import get_email
 
 from api.dependencies.security import get_password_hash
 

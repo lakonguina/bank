@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes.user import router as router_user
 from api.routes.country import router as router_country
+from api.routes.document import router as router_document
 
 api = FastAPI(
     title="Bank",
@@ -31,3 +32,4 @@ api.add_middleware(
 
 api.include_router(router_user)
 api.include_router(router_country)
+api.include_router(router_document)
