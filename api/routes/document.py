@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile
 from sqlmodel import Session
 
 from api.core.database import get_session
-from api.dependencies import has_access
+from api.dependencies.security import has_access
 
 from api.schemas.detail import Detail
 
@@ -18,10 +18,4 @@ def document_user_create(
 	session: Session = Depends(get_session),
 	id_user: int = Depends(has_access),
 ):
-	print('########################################################')
-	print('########################################################')
-	print(file.filename)
-	print('########################################################')
-	print('########################################################')
-
 	return {"detail": "Document created with success"}

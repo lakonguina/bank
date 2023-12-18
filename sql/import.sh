@@ -30,3 +30,18 @@ for db_dir in ${BASE_DIR}*; do
         done
     fi
 done
+
+# Path containing datas 
+BASE_DIR="/usr/src/sql/data/dev/frontoffice/"
+
+FILE_ORDER_FRONTOFFICE=("users" "emails" "phones")
+
+for f in "${FILE_ORDER_FRONTOFFICE[@]}"; do
+    psql --username "$DB_USER" -d "$db_name" -c "\copy $f FROM '$BASE_DIR$f.csv' CSV HEADER"
+
+	if [ $? -eq 0 ]; then
+		echo "$BASE_DIR$f.csv has been inserted into $db_name.$f"
+	else
+		echo "Erreur while inserting file $BASE_DIR$f.csv in $db_name.$f"
+	fi   
+done

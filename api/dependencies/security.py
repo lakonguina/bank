@@ -1,4 +1,3 @@
-from enum import Enum
 from datetime import datetime, timedelta
 
 import re
@@ -21,7 +20,7 @@ credentials_exception = HTTPException(
 	headers={"WWW-Authenticate": "Bearer"},
 )
 
-class JWTSlug(Enum):
+class JWTSlug:
 	access = "access"
 	verify_email = "verify_email"
 	reset_password = "reset_password"

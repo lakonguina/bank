@@ -1,0 +1,2 @@
+id_phone,id_user,phone,is_active,is_valid,date_validation,date_insert
+1,1,+33611253000,1,1,2023-12-18 00:00:00-00,2023-12-18 00:00:00-00

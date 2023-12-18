@@ -6,7 +6,7 @@ from api.schemas.address import Address, AddressIn, AddressOut
 from api.schemas.country import Country, CountryIn
 from api.schemas.email import Email, EmailField, EmailOut
 from api.schemas.phone import Phone, PhoneField, PhoneOut
-from api.schemas.document import DocumentUser, DocumentUserTypeSlug
+from api.schemas.document import DocumentUser
 
 
 class UserStatusOut(SQLModel):
@@ -72,7 +72,6 @@ class User(UserBase, UserPasswordField, table=True):
 class UserCreate(UserBase, UserPasswordField, EmailField, PhoneField):
 	country: CountryIn
 	address: AddressIn
-	document: DocumentUserTypeSlug
 
 
 class UserLoginByEmail(EmailField, UserPasswordField):
