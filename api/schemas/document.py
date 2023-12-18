@@ -20,6 +20,9 @@ class DocumentUser(SQLModel, table=True):
 	id_user: int = Field(foreign_key="users.id_user")
 	id_document_user_type: int = Field(foreign_key="documents_users_type.id_document_user_type")
 
+	filesize: int
+	filename: str = Field(max_length=256)
+
 	is_valid: bool = Field(default=False)
 
 	type_: DocumentUserType = Relationship(back_populates="documents")

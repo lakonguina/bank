@@ -1,0 +1,2 @@
+id_address,id_user,alpha3,street,city,zip_code,is_active,date_insert
+1,1,fra,1 Rue du Test,Paris,75000,1,2023-12-18 00:00:00-00

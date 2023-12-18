@@ -71,6 +71,8 @@ CREATE TABLE IF NOT EXISTS documents_users (
 	id_document SERIAL PRIMARY KEY,
 	id_user INT NOT NULL,
 	id_document_user_type INT NOT NULL,
+	filesize INT NOT NULL,
+	filename VARCHAR(256) NOT NULL,
 	is_valid BOOLEAN NOT NULL DEFAULT FALSE,
 	date_insert TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT fk_user FOREIGN KEY(id_user) REFERENCES users(id_user),

@@ -18,7 +18,10 @@ class Phone(PhoneField, table=True):
 
 	id_phone: Optional[int] = Field(primary_key=True)
 	id_user: int = Field(foreign_key="users.id_user") 
+
 	is_active: bool = Field(default=True)
+	is_valid: bool = Field(default=False)
+
 	date_validation: Optional[datetime]
 	date_insert: datetime
 

@@ -34,7 +34,7 @@ done
 # Path containing datas 
 BASE_DIR="/usr/src/sql/data/dev/frontoffice/"
 
-FILE_ORDER_FRONTOFFICE=("users" "emails" "phones")
+FILE_ORDER_FRONTOFFICE=("users" "emails" "phones" "addresses")
 
 for f in "${FILE_ORDER_FRONTOFFICE[@]}"; do
     psql --username "$DB_USER" -d "$db_name" -c "\copy $f FROM '$BASE_DIR$f.csv' CSV HEADER"
