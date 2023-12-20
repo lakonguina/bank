@@ -49,7 +49,7 @@ def create_user(session: Session, user: UserCreate) -> User:
 			detail="The country of your residence do not exist"
 		)
 
-	status = get_user_status(session, "waiting-for-validation")
+	status = get_user_status(session, "waiting-for-document")
 	hashed_password = get_password_hash(user.password)
 
 	db_user = User(

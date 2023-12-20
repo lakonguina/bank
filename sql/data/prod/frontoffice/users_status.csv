@@ -1,3 +1,4 @@
 id_user_status,slug
-1,waiting-for-validation
-2,valid
+1,waiting-for-document
+2,waiting-for-validation
+3,valid

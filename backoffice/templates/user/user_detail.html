@@ -79,6 +79,39 @@
 </div>
 
 <br>
+<h3>Documents</h3>
+<div class="table-responsive">
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Type</th>
+				<th>Valid</th>
+				<th>Size</th>
+				<th>Name</th>
+				<th>Date insert</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for document in user.documents %}
+			<tr>
+				<td>{{ document.id_document }}</td>
+				<td>{{ document.type_.slug }}</td>
+				<td>{{ bool_to_emoji(document.is_valid) }}</td>
+				<td>{{ document.filesize }}</td>
+				<td>{{ document.filename }}</td>
+				<td>{{ document.date_insert }}</td>
+				<td>
+					<a href="#">Action</a>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+<br>
 <h3>Addresses</h3>
 <div class="table-responsive">
 	<table class="table table-bordered">

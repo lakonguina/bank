@@ -8,9 +8,9 @@
 
 
 {% macro user_status(status) %}
-	{% if status.slug == "waiting-for-validation" %}
- 		<span class="badge bg-warning fs-6">En attente de valiation</span>
-	{% elif status.slug == "valid" %}
- 		<span class="badge bg-success fs-6">Validé</span>
+	{% if status.slug == "valid" %}
+ 		<span class="badge bg-success fs-6">{{ status.slug }}</span>
+	{% else %}
+ 		<span class="badge bg-warning fs-6">{{ status.slug }}</span>
 	{% endif %}
 {% endmacro %}

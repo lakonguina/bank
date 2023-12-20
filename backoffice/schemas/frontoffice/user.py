@@ -7,6 +7,7 @@ from backoffice.schemas.frontoffice.email import Email, EmailField, EmailOut
 from backoffice.schemas.frontoffice.phone import Phone, PhoneField, PhoneOut
 from backoffice.schemas.frontoffice.country import Country
 from backoffice.schemas.frontoffice.address import Address
+from backoffice.schemas.frontoffice.document import DocumentUser
 
 
 class UserStatusOut(SQLModel):
@@ -64,6 +65,8 @@ class UserFrontoffice(UserBase, UserPasswordField, table=True):
 			"viewonly": True,
 		}
 	)
+	
+	documents: DocumentUser = Relationship(back_populates="user")
 
 	date_insert: datetime
 	

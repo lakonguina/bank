@@ -18,37 +18,43 @@ router = APIRouter(tags=["Documents"])
 
 @router.post("/user/document/create", response_model=Detail)
 def document_user_create(
-	file: UploadFile,
-	type_ = Form(),
+	file_selfie: UploadFile,
+	file_recto: UploadFile,
+	file_verso: UploadFile,
 	session: Session = Depends(get_session),
 	id_user: int = Depends(has_access),
 ):
-	type_ = get_document_type(session, type_)
-	
-	if not type_:
-		raise HTTPException(
-			status_code=400,
-			detail="Document type do not exist"
-		)
-	
-	db_document = get_document_by_id_user(session, id_user)
-	
-	if db_document:
-		raise HTTPException(
-			status_code=400,
-			detail="User already have a document"
-		)
+	type_selfie = get_document_type(session, "selfie")
+	type_idcard_recto = get_document_type(session, "idcard_recto")
+	type_idcard_verso = get_document_type(session, "idcard_verso")
 
 	user = get_user_by_id(session, id_user)
 
-	db_document = DocumentUser(
+	db_selfie = DocumentUser(
 		user=user,
-		type_=type_,
-		filesize=file.size,
-		filename=file.filename,
+		type_=type_selfie,
+		filesize=file_selfie.size,
+		filename=file_selfie.filename,
 	)
 
-	session.add(db_document)
+	db_recto = DocumentUser(
+		user=user,
+		type_=type_idcard_recto,
+		filesize=file_recto.size,
+		filename=file_recto.filename,
+	)
+
+	db_verso = DocumentUser(
+		user=user,
+		type_=type_idcard_verso,
+		filesize=file_verso.size,
+		filename=file_verso.filename,
+	)
+
+	session.add(db_selfie)
+	session.add(db_recto)
+	session.add(db_verso)
+
 	session.commit()
 
 	return {"detail": "Document created with success"}

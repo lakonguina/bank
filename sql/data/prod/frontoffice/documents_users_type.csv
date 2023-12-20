@@ -1,3 +1,4 @@
 id_document_type,slug
-1,idcard
-2,passport
+1,selfie
+2,idcard_recto
+3,idcard_verso
