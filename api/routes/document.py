@@ -33,12 +33,13 @@ def document_user_create(
 			detail="Document type do not exist"
 		)
 	
-	"""
+	status_awaiting = get_document_status(session, "awaiting")
+	status_valid = get_document_status(session, "valid")
+
 	db_document = session.exec(
 		select(DocumentUser)
-		.where((DocumentUser.status.slug == "awaiting") | (DocumentUser.status.slug == "valid"))
+		.where((DocumentUser.status == status_awaiting) | (DocumentUser.status == status_valid))
 	).first()
-	"""
 
 	if db_document:
 		raise HTTPException(
@@ -47,11 +48,10 @@ def document_user_create(
 		)
 
 	user = get_user_by_id(session, id_user)
-	status = get_document_status(session, "awaiting")
 
 	db_document = DocumentUser(
 		user=user,
-		status=status,
+		status=status_awaiting,
 		type_=type_,
 		filesize=file.size,
 		filename=file.filename,
