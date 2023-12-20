@@ -31,6 +31,6 @@
             </ul>
         </div>
     </div>
-    <p class="mt-8">Interactive broker est autorisée et régulée par la Financial Conduct Authority. Numéro d'enregistrement FCA 208159. Constitutée en Angleterre et au Pays de Galles, immatriculée sous le numéro 03958476.</p>
-    <p class="mt-4">© 2023 Morgan Stanley. All rights reserved.</p>
+    <p class="mt-8">SGI Autorisée et régulée par la Financial Conduct Authority. Numéro d'enregistrement FCA 208159. Immatriculée sous le numéro 03958476.</p>
+    <p class="mt-4">© 2023 All rights reserved.</p>
 </footer>

@@ -17,7 +17,7 @@
 	<div class="2xl:px-96 xl:px-48 px-2">
 		<div class="mt-16 px-4 border-l-8 border-blue">
 			<p class="text-2xl font-bold">A propos de nous</p>
-			<p>Vanguard est une société d’investissement différente. Le groupe a été fondé aux États-Unis en 1975 sur une idée simple mais révolutionnaire : celle qu’une société d’investissement doit gérer ses fonds uniquement dans l’intérêt de ses clients.</p>
+			<p>Une société d’investissement différente. Le groupe a été fondé aux États-Unis en 1975 sur une idée simple mais révolutionnaire : celle qu’une société d’investissement doit gérer ses fonds uniquement dans l’intérêt de ses clients.</p>
 			<br>
 			<p>Cette philosophie a permis à des millions de personnes dans le monde d’atteindre leurs objectifs grâce à des investissements simples et peu coûteux.</p>
 			<br>
@@ -35,8 +35,8 @@
 				<p class="mt-4">Investissez en Afrique en actions, indices et obligations à partir d'une seule plateforme.</p>
 			</div>
 			<div class="bg-blue text-white px-4 py-4 mt-4 md:mt-0">
-				<p class="text-2xl font-bold">Accès aux marchés Africains</p>
-				<p class="mt-4">Investissez en Afrique en actions, indices et obligations à partir d'une seule plateforme.</p>
+				<p class="text-2xl font-bold">Technologie de pointe</p>
+				<p class="mt-4">La plateforme de trading puissante vous aident à améliorer votre  efficacité et réaliser des analyses de portefeuille élaborées.</p>
 			</div>
 		</div>
 	</div>

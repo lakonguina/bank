@@ -20,8 +20,8 @@
 <header>
 	<div class="flex justify-between items-center mx-auto max-w-screen-xl py-4 px-2">
 		<a href="/" class="flex">
-			<img src={logo} class="mr-3 h-16" alt="Logo" />
-			<!-- <span class="self-center text-xl font-semibold dark:text-white">Bank</span> -->
+			<!-- <img src={logo} class="mr-3 h-16" alt="Logo" /> -->
+			<span class="self-center text-xl font-semibold dark:text-white my-5">SGI</span>
 		</a>
 
 		<div>
