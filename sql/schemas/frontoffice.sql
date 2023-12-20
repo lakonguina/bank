@@ -67,14 +67,21 @@ CREATE TABLE IF NOT EXISTS documents_users_type (
 	slug VARCHAR(32) NOT NULL
 );
 
+
+CREATE TABLE IF NOT EXISTS documents_status (
+	id_document_status SERIAL PRIMARY KEY,
+	slug VARCHAR(32) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS documents_users (
 	id_document SERIAL PRIMARY KEY,
 	id_user INT NOT NULL,
+	id_document_status INT NOT NULL,
 	id_document_user_type INT NOT NULL,
 	filesize INT NOT NULL,
 	filename VARCHAR(256) NOT NULL,
-	is_valid BOOLEAN NOT NULL DEFAULT FALSE,
 	date_insert TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT fk_user FOREIGN KEY(id_user) REFERENCES users(id_user),
-	CONSTRAINT fk_document_user_type FOREIGN KEY(id_document_user_type) REFERENCES documents_users_type(id_document_user_type)
+	CONSTRAINT fk_document_user_type FOREIGN KEY(id_document_user_type) REFERENCES documents_users_type(id_document_user_type),
+	CONSTRAINT fk_document_status FOREIGN KEY(id_document_status) REFERENCES documents_status(id_document_status)
 );

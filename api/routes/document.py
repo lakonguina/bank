@@ -1,60 +1,63 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile
 
-from sqlmodel import Session
+#from sqlalchmey import or_
+from sqlmodel import Session, select
 
 from api.core.database import get_session
 
 from api.dependencies.security import has_access
 
 from api.schemas.detail import Detail
-from api.schemas.document import DocumentUser
+from api.schemas.document import DocumentStatus, DocumentUser, DocumentUserType
 
-from api.crud.document import get_document_type, get_document_by_id_user
+from api.crud.document import get_document_type, get_document_by_id_user, get_document_status
 from api.crud.user import get_user_by_id
-
 
 
 router = APIRouter(tags=["Documents"])
 
-@router.post("/user/document/create", response_model=Detail)
+@router.post("/user/document/create", response_model=None)
 def document_user_create(
-	file_selfie: UploadFile,
-	file_recto: UploadFile,
-	file_verso: UploadFile,
+	file: UploadFile,
+	type_: Annotated[str, Form()],
 	session: Session = Depends(get_session),
 	id_user: int = Depends(has_access),
 ):
-	type_selfie = get_document_type(session, "selfie")
-	type_idcard_recto = get_document_type(session, "idcard_recto")
-	type_idcard_verso = get_document_type(session, "idcard_verso")
+	type_ = get_document_type(session, type_)
+	
+	if not type_:
+		raise HTTPException(
+			status_code=400,
+			detail="Document type do not exist"
+		)
+	
+	"""
+	db_document = session.exec(
+		select(DocumentUser)
+		.where((DocumentUser.status.slug == "awaiting") | (DocumentUser.status.slug == "valid"))
+	).first()
+	"""
+
+	if db_document:
+		raise HTTPException(
+			status_code=400,
+			detail="Document already uploaded"
+		)
 
 	user = get_user_by_id(session, id_user)
+	status = get_document_status(session, "awaiting")
 
-	db_selfie = DocumentUser(
+	db_document = DocumentUser(
 		user=user,
-		type_=type_selfie,
-		filesize=file_selfie.size,
-		filename=file_selfie.filename,
+		status=status,
+		type_=type_,
+		filesize=file.size,
+		filename=file.filename,
 	)
 
-	db_recto = DocumentUser(
-		user=user,
-		type_=type_idcard_recto,
-		filesize=file_recto.size,
-		filename=file_recto.filename,
-	)
-
-	db_verso = DocumentUser(
-		user=user,
-		type_=type_idcard_verso,
-		filesize=file_verso.size,
-		filename=file_verso.filename,
-	)
-
-	session.add(db_selfie)
-	session.add(db_recto)
-	session.add(db_verso)
-
+	session.add(db_document)
 	session.commit()
 
 	return {"detail": "Document created with success"}

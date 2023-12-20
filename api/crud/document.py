@@ -1,7 +1,13 @@
 from sqlmodel import Session, select
 
-from api.schemas.document import DocumentUser, DocumentUserType
+from api.schemas.document import DocumentStatus, DocumentUser, DocumentUserType
 
+
+def get_document_status(session: Session, slug: str) -> DocumentStatus:
+	return session.exec(
+		select(DocumentStatus)
+		.where(DocumentStatus.slug == slug)
+	).one()
 
 def get_document_type(session: Session, slug: str) -> DocumentUserType:
 	return session.exec(

@@ -86,7 +86,7 @@
 			<tr>
 				<th>Id</th>
 				<th>Type</th>
-				<th>Valid</th>
+				<th>Status</th>
 				<th>Size</th>
 				<th>Name</th>
 				<th>Date insert</th>
@@ -98,7 +98,7 @@
 			<tr>
 				<td>{{ document.id_document }}</td>
 				<td>{{ document.type_.slug }}</td>
-				<td>{{ bool_to_emoji(document.is_valid) }}</td>
+				<td>{{ document.status.slug }}</td>
 				<td>{{ document.filesize }}</td>
 				<td>{{ document.filename }}</td>
 				<td>{{ document.date_insert }}</td>

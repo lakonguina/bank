@@ -8,7 +8,7 @@ from sqlmodel import Field, Relationship, SQLModel
 
 
 class EmailField(SQLModel):
-    email: EmailStr
+    email: str
 
 
 class EmailOut(EmailField):
