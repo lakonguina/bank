@@ -10,9 +10,6 @@ Make sure you have the following tools installed on your machine:
 
 - [Docker](https://www.docker.com/)
 - [Docker Compose](https://docs.docker.com/compose/)
-- [Node.js](https://nodejs.org/)
-- [npm](https://www.npmjs.com/)
-- [Python](https://www.python.org/)
 
 ## Get started
 1. **Clone the repository:**
